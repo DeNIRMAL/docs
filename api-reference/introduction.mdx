@@ -1,310 +1,85 @@
 ---
-title: 'API Introduction'
-description: 'Get started with the SuperMemory API'
+title: "API Introduction"
+description: "Get started with the Vevibe Memory API"
 ---
 
-## Welcome to SuperMemory API
+# Vevibe Memory API
 
-The SuperMemory API provides comprehensive programmatic access to your knowledge base. Whether you're building custom integrations, automating content workflows, or developing applications that leverage your stored knowledge, our RESTful API offers the tools you need.
+The Vevibe Memory API provides powerful tools for building AI-driven memory systems. Our REST API allows you to store, organize, search, and interact with information using natural language.
 
 ## Base URL
 
-All API requests should be made to:
+All API endpoints are available at:
 
 ```
-https://api.vevibe.com
+https://api.vevibe.com/v1
 ```
 
-## Quick Start
+## Authentication
 
-Get up and running with the SuperMemory API in minutes:
-
-<Steps>
-  <Step title="Get Your API Key">
-    Generate an API key from your [SuperMemory dashboard](https://supermemory.ai/settings/integrations)
-  </Step>
-  <Step title="Make Your First Request">
-    Test your connection with a simple API call
-  </Step>
-  <Step title="Explore the Endpoints">
-    Start building with our comprehensive endpoint collection
-  </Step>
-</Steps>
-
-### Test Your Connection
+The Vevibe Memory API uses Bearer token authentication. Include your API key in the Authorization header:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-     https://api.vevibe.com/v1/user
+Authorization: Bearer YOUR_API_KEY
 ```
 
-Expected response:
-```json
-{
-  "id": 123,
-  "uuid": "user-uuid-here",
-  "email": "your@email.com",
-  "firstName": "Your",
-  "lastName": "Name",
-  "emailVerified": true
-}
-```
+You can get your API key from the [Vevibe Dashboard](https://vevibe.com/dashboard).
 
-## API Features
+## Rate Limits
 
-<CardGroup cols={2}>
-  <Card
-    title="RESTful Design"
-    icon="code"
-  >
-    Standard HTTP methods and status codes for intuitive integration
-  </Card>
-  <Card
-    title="JSON Responses"
-    icon="brackets-curly"
-  >
-    All responses are in JSON format for easy parsing
-  </Card>
-  <Card
-    title="Streaming Support"
-    icon="stream"
-  >
-    Real-time streaming for chat and bulk operations
-  </Card>
-  <Card
-    title="Comprehensive Coverage"
-    icon="layer-group"
-  >
-    Full access to all SuperMemory features through API
-  </Card>
-</CardGroup>
+- **Free tier**: 1,000 requests per day
+- **Pro tier**: 10,000 requests per day
+- **Enterprise tier**: Custom limits
 
-## Key Concepts
+Rate limit headers are included in every response:
+- `X-RateLimit-Limit`: Your rate limit ceiling for that given request
+- `X-RateLimit-Remaining`: Number of requests left for the time window
+- `X-RateLimit-Reset`: UTC epoch seconds when the rate limit resets
 
-### Resources
+## Response Format
 
-The SuperMemory API is organized around several key resources:
-
-- **Users**: Account information and settings
-- **Spaces**: Knowledge organization containers
-- **Memories**: Individual pieces of saved content
-- **Chat**: AI-powered conversations with your knowledge
-- **Search**: Semantic search across your content
-
-### Authentication
-
-All API requests require authentication using Bearer tokens:
-
-```http
-Authorization: Bearer your_api_key_here
-```
-
-### Content Types
-
-SuperMemory supports various content types:
-
-- **Pages**: Web pages and articles
-- **Notes**: Text-based personal notes
-- **Documents**: PDF and document files
-- **Tweets**: Twitter content with special handling
-
-## API Conventions
-
-### HTTP Methods
-
-| Method | Usage |
-|--------|-------|
-| `GET` | Retrieve resources |
-| `POST` | Create new resources |
-| `PATCH` | Update existing resources |
-| `DELETE` | Remove resources |
-
-### Response Format
-
-All successful responses follow this structure:
+All API responses follow a consistent format:
 
 ```json
 {
+  "success": true,
   "data": {
     // Response data here
   },
-  "meta": {
-    "timestamp": "2025-01-01T12:00:00Z",
-    "requestId": "req_123456"
-  }
+  "message": "Success message"
 }
 ```
 
-### Error Format
-
-Error responses include detailed information:
+Error responses:
 
 ```json
 {
+  "success": false,
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid request parameters",
-    "details": {
-      "field": "content",
-      "reason": "Content cannot be empty"
-    }
+    "code": "ERROR_CODE",
+    "message": "Human readable error message"
   }
 }
 ```
 
-## Rate Limiting
+## Status Codes
 
-The API implements rate limiting to ensure fair usage:
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `429` - Too Many Requests
+- `500` - Internal Server Error
 
-- **Free Plan**: 60 requests/minute, 10,000 requests/day
-- **Pro Plan**: 300 requests/minute, 100,000 requests/day
-- **Enterprise**: Custom limits based on agreement
+## Getting Started
 
-Rate limit information is included in response headers:
+1. [Get your API key](https://vevibe.com/dashboard)
+2. [Create a space](/api-reference/spaces#create-space)
+3. [Add memories](/api-reference/memories#create-memory)
+4. [Search and chat](/api-reference/chat)
 
-```http
-X-RateLimit-Limit: 60
-X-RateLimit-Remaining: 59
-X-RateLimit-Reset: 1640995200
-```
-
-When rate limits are exceeded, you'll receive a `429 Too Many Requests` response with a `Retry-After` header.
-
-## SDKs and Libraries
-
-Official SDKs are available for popular languages:
-
-<CardGroup cols={2}>
-  <Card
-    title="JavaScript/TypeScript"
-    href="/sdks/javascript"
-    icon="js"
-  >
-    npm install @supermemory/sdk
-  </Card>
-  <Card
-    title="Python"
-    href="/sdks/python"
-    icon="python"
-  >
-    pip install supermemory-python
-  </Card>
-</CardGroup>
-
-## Common Use Cases
-
-### Content Management
-
-```javascript
-// Add a new memory
-const memory = await supermemory.memories.create({
-  type: 'page',
-  content: 'https://example.com/article',
-  spaces: ['work-space-id']
-});
-
-// Search memories
-const results = await supermemory.search({
-  query: 'machine learning best practices',
-  limit: 10
-});
-```
-
-### AI Integration
-
-```javascript
-// Chat with your knowledge
-const response = await supermemory.chat({
-  messages: [
-    { role: 'user', content: 'What have I learned about React hooks?' }
-  ]
-});
-
-// Stream the response
-for await (const chunk of response) {
-  console.log(chunk.content);
-}
-```
-
-### Space Management
-
-```javascript
-// Create a new space
-const space = await supermemory.spaces.create({
-  name: 'Research Project',
-  isPublic: false
-});
-
-// Invite collaborators
-await supermemory.spaces.invite(space.uuid, {
-  email: 'colleague@example.com',
-  accessType: 'edit'
-});
-```
-
-## API Endpoints Overview
-
-### User Management
-- `GET /v1/user` - Get user information
-- `GET /v1/user/spaces` - Get user's spaces
-- `POST /v1/user/key` - Generate API key
-
-### Space Management
-- `GET /v1/spaces` - List spaces
-- `POST /v1/spaces/create` - Create space
-- `GET /v1/spaces/{id}` - Get space details
-- `PATCH /v1/spaces/{id}` - Update space
-- `DELETE /v1/spaces/{id}` - Delete space
-
-### Memory Management
-- `GET /v1/memories` - List memories
-- `GET /v1/memories/{id}` - Get memory details
-- `DELETE /v1/memories/{id}` - Delete memory
-- `POST /v1/memories/batch-delete` - Bulk delete
-
-### Content Operations
-- `POST /v1/add` - Add new content
-- `POST /v1/bulk-add` - Bulk add content
-- `POST /v1/reprocess-missing-metadata` - Reprocess content
-
-### AI & Search
-- `POST /v1/search` - Semantic search
-- `POST /v1/chat` - AI chat
-- `GET /v1/recommended-questions` - Get suggestions
-
-## Getting Help
-
-<CardGroup cols={3}>
-  <Card
-    title="Documentation"
-    icon="book"
-    href="/api-reference/authentication"
-  >
-    Comprehensive API reference and guides
-  </Card>
-  <Card
-    title="GitHub Issues"
-    icon="github"
-    href="https://github.com/DeNIRMAL/memory2/issues"
-  >
-    Report bugs and request features
-  </Card>
-  <Card
-    title="Discord Community"
-    icon="discord"
-    href="https://discord.gg/supermemory"
-  >
-    Get help from the community
-  </Card>
-</CardGroup>
-
-## Status and Monitoring
-
-- **API Status**: [status.supermemory.ai](https://status.supermemory.ai)
-- **Uptime**: 99.9% SLA for Pro and Enterprise plans
-- **Response Times**: Typical response times under 200ms
-- **Maintenance Windows**: Announced 48 hours in advance
-
----
-
-Ready to start building with SuperMemory? Check out our [authentication guide](/api-reference/authentication) or explore specific endpoints in the navigation menu.
+<Card title="Quick Start" icon="rocket">
+  Ready to make your first API call? Check out our [Quickstart Guide](/quickstart) for a step-by-step walkthrough.
+</Card>
