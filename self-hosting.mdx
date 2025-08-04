@@ -1,0 +1,683 @@
+---
+title: 'Self-Hosting Guide'
+description: 'Deploy SuperMemory on your own infrastructure'
+---
+
+## Overview
+
+SuperMemory can be self-hosted, giving you complete control over your data and infrastructure. This guide will walk you through setting up SuperMemory on your own servers or cloud infrastructure.
+
+<Info>
+Self-hosting requires technical expertise in Docker, databases, and web application deployment. Consider our hosted solution if you prefer a managed experience.
+</Info>
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+<CardGroup cols={2}>
+  <Card
+    title="Docker & Docker Compose"
+    icon="docker"
+  >
+    Required for containerized deployment
+  </Card>
+  <Card
+    title="PostgreSQL Database"
+    icon="database"
+  >
+    For storing user data and memories
+  </Card>
+  <Card
+    title="Node.js 18+"
+    icon="node-js"
+  >
+    For running the application
+  </Card>
+  <Card
+    title="Redis (Optional)"
+    icon="server"
+  >
+    For caching and session management
+  </Card>
+</CardGroup>
+
+### System Requirements
+
+**Minimum Requirements:**
+- 2 CPU cores
+- 4GB RAM
+- 20GB storage
+- Ubuntu 20.04+ or similar Linux distribution
+
+**Recommended for Production:**
+- 4+ CPU cores
+- 8GB+ RAM
+- 100GB+ SSD storage
+- Load balancer for high availability
+
+## Quick Start with Docker
+
+The fastest way to get SuperMemory running is with Docker Compose:
+
+<Steps>
+  <Step title="Clone the Repository">
+    ```bash
+    git clone https://github.com/DeNIRMAL/memory2.git
+    cd memory2
+    ```
+  </Step>
+  <Step title="Copy Environment Configuration">
+    ```bash
+    cp .env.example .env
+    ```
+  </Step>
+  <Step title="Configure Environment Variables">
+    Edit `.env` with your settings (see configuration section below)
+  </Step>
+  <Step title="Start Services">
+    ```bash
+    docker-compose up -d
+    ```
+  </Step>
+  <Step title="Run Database Migrations">
+    ```bash
+    docker-compose exec backend npm run migrate
+    ```
+  </Step>
+</Steps>
+
+Your SuperMemory instance will be available at `http://localhost:3000`.
+
+## Manual Installation
+
+For more control over the deployment:
+
+### 1. Database Setup
+
+<Tabs>
+  <Tab title="PostgreSQL">
+    ```bash
+    # Install PostgreSQL
+    sudo apt update
+    sudo apt install postgresql postgresql-contrib
+
+    # Create database and user
+    sudo -u postgres psql
+    CREATE DATABASE supermemory;
+    CREATE USER supermemory_user WITH PASSWORD 'your_secure_password';
+    GRANT ALL PRIVILEGES ON DATABASE supermemory TO supermemory_user;
+    \q
+    ```
+  </Tab>
+  <Tab title="Docker PostgreSQL">
+    ```bash
+    docker run -d \
+      --name supermemory-postgres \
+      -e POSTGRES_DB=supermemory \
+      -e POSTGRES_USER=supermemory_user \
+      -e POSTGRES_PASSWORD=your_secure_password \
+      -p 5432:5432 \
+      -v postgres_data:/var/lib/postgresql/data \
+      postgres:15
+    ```
+  </Tab>
+</Tabs>
+
+### 2. Backend Setup
+
+```bash
+# Navigate to backend directory
+cd apps/backend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run database migrations
+npm run migrate
+
+# Start the backend
+npm run start
+```
+
+### 3. Frontend Setup
+
+```bash
+# Navigate to web directory
+cd apps/web
+
+# Install dependencies
+npm install
+
+# Build the application
+npm run build
+
+# Start the frontend
+npm run start
+```
+
+### 4. Browser Extension (Optional)
+
+```bash
+# Navigate to extension directory
+cd apps/extension
+
+# Install dependencies
+npm install
+
+# Build the extension
+npm run build
+
+# Load the extension in your browser from the dist/ folder
+```
+
+## Configuration
+
+### Environment Variables
+
+Key environment variables for self-hosting:
+
+<Tabs>
+  <Tab title="Backend (.env)">
+    ```bash
+    # Database
+    DATABASE_URL="postgresql://user:password@localhost:5432/supermemory"
+
+    # Authentication
+    JWT_SECRET="your-very-secure-jwt-secret"
+    NEXTAUTH_SECRET="your-nextauth-secret"
+    NEXTAUTH_URL="http://localhost:3000"
+
+    # AI Services
+    OPENAI_API_KEY="your-openai-api-key"
+    ANTHROPIC_API_KEY="your-anthropic-api-key"
+
+    # Storage (optional)
+    AWS_ACCESS_KEY_ID="your-aws-access-key"
+    AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
+    AWS_REGION="us-east-1"
+    S3_BUCKET_NAME="your-supermemory-bucket"
+
+    # Email (optional)
+    SMTP_HOST="smtp.gmail.com"
+    SMTP_PORT="587"
+    SMTP_USER="your-email@gmail.com"
+    SMTP_PASS="your-email-password"
+
+    # Vector Database
+    PINECONE_API_KEY="your-pinecone-api-key"
+    PINECONE_INDEX_NAME="supermemory-index"
+
+    # Redis (optional)
+    REDIS_URL="redis://localhost:6379"
+    ```
+  </Tab>
+  <Tab title="Frontend (.env)">
+    ```bash
+    # API Configuration
+    NEXT_PUBLIC_API_URL="http://localhost:8787"
+    NEXT_PUBLIC_WEB_URL="http://localhost:3000"
+
+    # Authentication
+    NEXTAUTH_URL="http://localhost:3000"
+    NEXTAUTH_SECRET="your-nextauth-secret"
+
+    # OAuth Providers (optional)
+    GOOGLE_CLIENT_ID="your-google-client-id"
+    GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+    # Twitter Integration (optional)
+    TWITTER_CLIENT_ID="your-twitter-client-id"
+    TWITTER_CLIENT_SECRET="your-twitter-client-secret"
+    ```
+  </Tab>
+</Tabs>
+
+### Database Configuration
+
+SuperMemory uses PostgreSQL with the following optimizations:
+
+```sql
+-- Recommended PostgreSQL settings for production
+ALTER SYSTEM SET shared_buffers = '256MB';
+ALTER SYSTEM SET effective_cache_size = '1GB';
+ALTER SYSTEM SET maintenance_work_mem = '64MB';
+ALTER SYSTEM SET checkpoint_completion_target = 0.9;
+ALTER SYSTEM SET wal_buffers = '16MB';
+ALTER SYSTEM SET default_statistics_target = 100;
+SELECT pg_reload_conf();
+```
+
+## Docker Compose Configuration
+
+Here's a complete `docker-compose.yml` for production deployment:
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: supermemory
+      POSTGRES_USER: supermemory_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://supermemory_user:${DB_PASSWORD}@postgres:5432/supermemory
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8787:8787"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8787
+      NEXTAUTH_URL: ${PUBLIC_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+```
+
+## Production Deployment
+
+### SSL/TLS Configuration
+
+<Steps>
+  <Step title="Obtain SSL Certificate">
+    Use Let's Encrypt for free SSL certificates:
+    ```bash
+    sudo apt install certbot
+    sudo certbot certonly --standalone -d yourdomain.com
+    ```
+  </Step>
+  <Step title="Configure Nginx">
+    Create an Nginx configuration with SSL:
+    ```nginx
+    server {
+        listen 80;
+        server_name yourdomain.com;
+        return 301 https://$server_name$request_uri;
+    }
+
+    server {
+        listen 443 ssl http2;
+        server_name yourdomain.com;
+
+        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+        location / {
+            proxy_pass http://frontend:3000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /api {
+            proxy_pass http://backend:8787;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+    ```
+  </Step>
+  <Step title="Set Up Auto-Renewal">
+    ```bash
+    sudo crontab -e
+    # Add: 0 12 * * * /usr/bin/certbot renew --quiet
+    ```
+  </Step>
+</Steps>
+
+### Monitoring and Logging
+
+<AccordionGroup>
+  <Accordion title="Application Monitoring">
+    Use tools like Prometheus and Grafana:
+    ```yaml
+    # Add to docker-compose.yml
+    prometheus:
+      image: prom/prometheus
+      ports:
+        - "9090:9090"
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+    grafana:
+      image: grafana/grafana
+      ports:
+        - "3001:3000"
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+    ```
+  </Accordion>
+
+  <Accordion title="Log Management">
+    Configure centralized logging:
+    ```yaml
+    # Add to all services in docker-compose.yml
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ```
+  </Accordion>
+
+  <Accordion title="Health Checks">
+    Add health checks to services:
+    ```yaml
+    backend:
+      # ... other config
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8787/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Backup Strategy
+
+<Steps>
+  <Step title="Database Backups">
+    ```bash
+    # Create backup script
+    #!/bin/bash
+    DB_NAME="supermemory"
+    BACKUP_DIR="/backups"
+    DATE=$(date +%Y%m%d_%H%M%S)
+    
+    docker exec supermemory-postgres pg_dump -U supermemory_user $DB_NAME > $BACKUP_DIR/backup_$DATE.sql
+    
+    # Keep only last 7 days of backups
+    find $BACKUP_DIR -name "backup_*.sql" -mtime +7 -delete
+    ```
+  </Step>
+  <Step title="File Storage Backups">
+    ```bash
+    # Backup uploaded files (if using local storage)
+    rsync -av /path/to/uploads/ /backup/location/uploads/
+    ```
+  </Step>
+  <Step title="Automated Backups">
+    ```bash
+    # Add to crontab
+    0 2 * * * /path/to/backup-script.sh
+    ```
+  </Step>
+</Steps>
+
+## Scaling Considerations
+
+### Horizontal Scaling
+
+For high-traffic deployments:
+
+<CardGroup cols={2}>
+  <Card
+    title="Load Balancing"
+    icon="balance-scale"
+  >
+    Use multiple backend instances behind a load balancer
+  </Card>
+  <Card
+    title="Database Replication"
+    icon="copy"
+  >
+    Set up read replicas for database scaling
+  </Card>
+  <Card
+    title="CDN Integration"
+    icon="cloud"
+  >
+    Use CloudFlare or AWS CloudFront for static assets
+  </Card>
+  <Card
+    title="Caching Layer"
+    icon="layer-group"
+  >
+    Implement Redis caching for frequently accessed data
+  </Card>
+</CardGroup>
+
+### Performance Optimization
+
+```bash
+# Database optimization
+# In postgresql.conf
+shared_buffers = 25% of RAM
+effective_cache_size = 75% of RAM
+work_mem = RAM / max_connections
+maintenance_work_mem = RAM / 16
+
+# Application optimization
+# Set environment variables
+NODE_ENV=production
+NEXT_PUBLIC_NODE_ENV=production
+```
+
+## Security Considerations
+
+### Network Security
+
+<AccordionGroup>
+  <Accordion title="Firewall Configuration">
+    ```bash
+    # UFW firewall setup
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+    sudo ufw allow ssh
+    sudo ufw allow 80
+    sudo ufw allow 443
+    sudo ufw enable
+    ```
+  </Accordion>
+
+  <Accordion title="Database Security">
+    ```bash
+    # PostgreSQL security
+    # In postgresql.conf
+    listen_addresses = 'localhost'
+    ssl = on
+    password_encryption = scram-sha-256
+    
+    # In pg_hba.conf
+    hostssl all all 0.0.0.0/0 scram-sha-256
+    ```
+  </Accordion>
+
+  <Accordion title="Application Security">
+    ```bash
+    # Set secure environment variables
+    JWT_SECRET="$(openssl rand -base64 32)"
+    NEXTAUTH_SECRET="$(openssl rand -base64 32)"
+    DB_PASSWORD="$(openssl rand -base64 32)"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Database Connection Issues">
+    ```bash
+    # Check database status
+    docker logs supermemory-postgres
+    
+    # Test connection
+    docker exec -it supermemory-postgres psql -U supermemory_user -d supermemory
+    
+    # Check network connectivity
+    docker network ls
+    docker network inspect memory2_default
+    ```
+  </Accordion>
+
+  <Accordion title="Memory Issues">
+    ```bash
+    # Monitor memory usage
+    docker stats
+    
+    # Increase Node.js memory limit
+    NODE_OPTIONS="--max-old-space-size=4096"
+    ```
+  </Accordion>
+
+  <Accordion title="Performance Issues">
+    ```bash
+    # Check logs for errors
+    docker logs supermemory-backend
+    docker logs supermemory-frontend
+    
+    # Monitor resource usage
+    htop
+    iotop
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Log Analysis
+
+```bash
+# View application logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
+
+# Check specific service logs
+docker logs --tail 100 supermemory-backend
+
+# Monitor real-time logs
+docker logs -f supermemory-backend | grep ERROR
+```
+
+## Updates and Maintenance
+
+### Updating SuperMemory
+
+<Steps>
+  <Step title="Backup Current Installation">
+    ```bash
+    # Backup database
+    docker exec supermemory-postgres pg_dump -U supermemory_user supermemory > backup.sql
+    
+    # Backup volumes
+    docker run --rm -v memory2_postgres_data:/data -v $(pwd):/backup alpine tar czf /backup/postgres_backup.tar.gz /data
+    ```
+  </Step>
+  <Step title="Pull Latest Changes">
+    ```bash
+    git fetch origin
+    git checkout main
+    git pull origin main
+    ```
+  </Step>
+  <Step title="Update Services">
+    ```bash
+    docker-compose down
+    docker-compose build --no-cache
+    docker-compose up -d
+    ```
+  </Step>
+  <Step title="Run Migrations">
+    ```bash
+    docker-compose exec backend npm run migrate
+    ```
+  </Step>
+</Steps>
+
+### Maintenance Tasks
+
+Regular maintenance tasks:
+
+```bash
+# Clean up Docker images
+docker system prune -a
+
+# Update system packages
+sudo apt update && sudo apt upgrade
+
+# Rotate logs
+logrotate /etc/logrotate.conf
+
+# Check disk space
+df -h
+du -sh /var/lib/docker/
+```
+
+## Support
+
+For self-hosting support:
+
+<CardGroup cols={2}>
+  <Card
+    title="GitHub Issues"
+    href="https://github.com/DeNIRMAL/memory2/issues"
+    icon="github"
+  >
+    Report technical issues and bugs
+  </Card>
+  <Card
+    title="Self-Hosting Discord"
+    href="https://discord.gg/supermemory"
+    icon="discord"
+  >
+    Get help from the community
+  </Card>
+</CardGroup>
+
+---
+
+Self-hosting SuperMemory gives you complete control over your data and infrastructure. While it requires technical expertise, it provides the ultimate in privacy and customization for your knowledge management needs.

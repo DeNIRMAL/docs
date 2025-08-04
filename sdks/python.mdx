@@ -1,0 +1,839 @@
+---
+title: 'Python SDK'
+description: 'Official Python SDK for SuperMemory'
+---
+
+## Installation
+
+Install the SuperMemory Python SDK using pip:
+
+```bash
+pip install supermemory-python
+```
+
+For development or specific versions:
+
+```bash
+# Install from source
+pip install git+https://github.com/DeNIRMAL/memory2.git#subdirectory=packages/python-sdk
+
+# Install specific version
+pip install supermemory-python==1.0.0
+
+# Install with optional dependencies
+pip install supermemory-python[async,dev]
+```
+
+## Quick Start
+
+Get started with the SuperMemory Python SDK:
+
+```python
+from supermemory import SuperMemory
+
+# Initialize the client
+sm = SuperMemory(api_key="your_api_key_here")
+
+# Add a memory
+memory = sm.memories.create(
+    type="page",
+    content="https://example.com/article",
+    spaces=["work-space-id"]
+)
+
+# Search memories
+results = sm.search(
+    query="machine learning best practices",
+    limit=10
+)
+
+# Chat with your knowledge
+chat_response = sm.chat(
+    messages=[
+        {"role": "user", "content": "What have I learned about Python?"}
+    ]
+)
+
+# Handle streaming response
+for chunk in chat_response:
+    print(chunk.get("content", ""), end="")
+```
+
+## Configuration
+
+### Environment Variables
+
+Set up your environment:
+
+```bash
+# .env file
+SUPERMEMORY_API_KEY=your_api_key_here
+SUPERMEMORY_BASE_URL=https://api.vevibe.com  # Optional
+```
+
+### Client Configuration
+
+```python
+from supermemory import SuperMemory
+import os
+
+# Basic configuration
+sm = SuperMemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
+
+# Advanced configuration
+sm = SuperMemory(
+    api_key="your_api_key",
+    base_url="https://api.vevibe.com",  # Custom API endpoint
+    timeout=60.0,                       # Request timeout in seconds
+    max_retries=3,                      # Number of retries
+    retry_delay=1.0,                    # Delay between retries
+    user_agent="MyApp/1.0",            # Custom user agent
+)
+```
+
+## User Management
+
+### User Information
+
+```python
+# Get current user information
+user = sm.user.get()
+print(f"User: {user['firstName']} {user['lastName']}")
+print(f"Email: {user['email']}")
+
+# Get user's spaces
+spaces = sm.user.get_spaces()
+for space in spaces['spaces']:
+    print(f"Space: {space['name']} ({space['uuid']})")
+
+# Get chat history
+history = sm.user.get_chat_history()
+for thread in history['history']:
+    print(f"Thread: {thread['title']} - {thread['createdAt']}")
+
+# Generate new API key
+new_key = sm.user.generate_api_key()
+print(f"New API key: {new_key['decrypted']}")
+```
+
+## Space Management
+
+### CRUD Operations
+
+```python
+# Create a new space
+space = sm.spaces.create(
+    space_name="Research Project",
+    is_public=False
+)
+print(f"Created space: {space['space']['uuid']}")
+
+# List all spaces
+spaces = sm.spaces.list()
+for space in spaces['spaces']:
+    print(f"Space: {space['name']} - {'Public' if space['isPublic'] else 'Private'}")
+
+# Get specific space details
+space_details = sm.spaces.get("space-uuid")
+print(f"Space: {space_details['name']}")
+print(f"Owner: {space_details['owner']['name']}")
+
+# Update space name
+updated_space = sm.spaces.update(
+    space_id="space-uuid",
+    name="Updated Research Project"
+)
+
+# Delete space (owner only)
+sm.spaces.delete("space-uuid")
+```
+
+### Collaboration
+
+```python
+# Invite user to space
+sm.spaces.invite(
+    space_id="space-uuid",
+    email="colleague@example.com",
+    access_type="edit"  # or "read"
+)
+
+# Get pending invitations
+invitations = sm.user.get_invitations()
+for invitation in invitations['invitations']:
+    space_name = invitation['spaceName']
+    access_type = invitation['spaceAccess']['accessType']
+    print(f"Invited to: {space_name} with {access_type} access")
+
+# Accept invitation
+sm.spaces.accept_invitation("space-uuid")
+
+# Reject invitation
+sm.spaces.reject_invitation("space-uuid")
+
+# Favorite a space
+sm.spaces.favorite("space-uuid")
+```
+
+### Content Management
+
+```python
+# Add existing memory to space
+sm.spaces.add_content(
+    space_id="space-uuid",
+    document_id="memory-uuid"
+)
+
+# Move memory between spaces
+sm.spaces.move_content(
+    space_id="target-space-uuid",
+    document_id="memory-uuid"
+)
+```
+
+## Memory Management
+
+### Creating Memories
+
+```python
+# Add a web page
+page_memory = sm.memories.create(
+    type="page",
+    content="https://example.com/article",
+    spaces=["space-uuid"]
+)
+
+# Add a personal note
+note_memory = sm.memories.create(
+    type="note",
+    content="This is my personal note about productivity tips",
+    spaces=["personal-space-uuid"]
+)
+
+# Add content with custom metadata
+memory_with_metadata = sm.memories.create(
+    type="page",
+    content="https://example.com/article",
+    url="https://example.com/article",
+    spaces=["space-uuid"],
+    prefetched={
+        "title": "Custom Article Title",
+        "description": "Custom description",
+        "ogImage": "https://example.com/image.jpg",
+        "contentToSave": "Full article content...",
+        "contentToVectorize": "Processed content for search..."
+    }
+)
+```
+
+### Bulk Operations
+
+```python
+# Bulk add URLs
+urls = [
+    "https://example1.com",
+    "https://example2.com", 
+    "https://example3.com"
+]
+
+# Returns an iterator for streaming responses
+bulk_response = sm.memories.bulk_add(
+    urls=urls,
+    spaces=["space-uuid"]
+)
+
+# Process streaming response
+for update in bulk_response:
+    if update.get("success"):
+        print(f"✓ Added: {update.get('url')}")
+    else:
+        print(f"✗ Failed: {update.get('url')} - {update.get('error')}")
+
+# Bulk add text content
+contents = [
+    "First note content",
+    "Second note content", 
+    "Third note content"
+]
+
+bulk_text_response = sm.memories.bulk_add(
+    contents=contents,
+    spaces=["space-uuid"]
+)
+```
+
+### Retrieving and Managing
+
+```python
+# List memories with pagination
+memories = sm.memories.list(
+    start=0,
+    count=20,
+    space_id="space-uuid"  # Optional filter
+)
+
+print(f"Total memories: {memories['total']}")
+for memory in memories['items']:
+    print(f"Memory: {memory['title']} ({memory['type']})")
+
+# Get specific memory
+memory = sm.memories.get("memory-uuid")
+print(f"Title: {memory['title']}")
+print(f"URL: {memory['url']}")
+print(f"Created: {memory['createdAt']}")
+
+# Delete memory
+sm.memories.delete("memory-uuid")
+
+# Batch delete memories
+memory_ids = ["uuid1", "uuid2", "uuid3"]
+result = sm.memories.batch_delete(memory_ids)
+print(f"Deleted {result['deletedCount']} memories")
+```
+
+## Search and AI Features
+
+### Semantic Search
+
+```python
+# Basic search
+results = sm.search(
+    query="machine learning best practices",
+    limit=10
+)
+
+# Advanced search with filters
+advanced_results = sm.search(
+    query="productivity tips",
+    limit=20,
+    threshold=0.8,  # Similarity threshold
+    spaces=["work-space-uuid", "personal-space-uuid"]
+)
+
+# Process search results
+for result in results['results']:
+    doc = result['document']
+    print(f"Title: {doc['title']}")
+    print(f"Similarity: {result['similarity']:.3f}")
+    print(f"Snippet: {result['chunk'][:100]}...")
+    print("---")
+```
+
+### AI Chat
+
+```python
+# Simple chat
+messages = [
+    {"role": "user", "content": "What have I learned about Python best practices?"}
+]
+
+chat_response = sm.chat(messages=messages)
+
+# Handle streaming response
+full_response = ""
+for chunk in chat_response:
+    content = chunk.get("content", "")
+    print(content, end="")
+    full_response += content
+
+print(f"\n\nFull response: {full_response}")
+
+# Continue conversation with thread ID
+continued_chat = sm.chat(
+    messages=[
+        {"role": "user", "content": "Tell me more about error handling"}
+    ],
+    thread_id="existing-thread-id"
+)
+```
+
+### AI Suggestions
+
+```python
+# Get recommended questions
+questions = sm.ai.get_recommended_questions()
+print("Recommended questions:")
+for question in questions['questions']:
+    print(f"- {question}")
+
+# Get suggested learnings
+learnings = sm.ai.get_suggested_learnings()
+print("\nSuggested learnings:")
+for learning in learnings['suggestedLearnings']:
+    print(f"- {learning['title']}: {learning['description']}")
+```
+
+## Async Support
+
+For high-performance applications, use the async client:
+
+```python
+import asyncio
+from supermemory import AsyncSuperMemory
+
+async def main():
+    # Initialize async client
+    sm = AsyncSuperMemory(api_key="your_api_key")
+    
+    # Async operations
+    user = await sm.user.get()
+    print(f"User: {user['email']}")
+    
+    # Concurrent operations
+    search_task = sm.search(query="python", limit=5)
+    spaces_task = sm.spaces.list()
+    
+    search_results, spaces = await asyncio.gather(search_task, spaces_task)
+    
+    print(f"Found {len(search_results['results'])} results")
+    print(f"User has {len(spaces['spaces'])} spaces")
+    
+    # Close the client
+    await sm.close()
+
+# Run async code
+asyncio.run(main())
+```
+
+## Error Handling
+
+### Exception Types
+
+```python
+from supermemory.exceptions import (
+    SuperMemoryError,
+    AuthenticationError,
+    RateLimitError,
+    ValidationError,
+    NotFoundError
+)
+
+try:
+    memory = sm.memories.create(
+        type="page",
+        content="https://example.com"
+    )
+except AuthenticationError as e:
+    print(f"Authentication failed: {e}")
+except RateLimitError as e:
+    print(f"Rate limit exceeded. Retry after: {e.retry_after} seconds")
+except ValidationError as e:
+    print(f"Validation error: {e.details}")
+except NotFoundError as e:
+    print(f"Resource not found: {e}")
+except SuperMemoryError as e:
+    print(f"API error: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+```
+
+### Retry Logic
+
+```python
+from supermemory import SuperMemory
+from supermemory.exceptions import RateLimitError
+import time
+
+def add_memory_with_retry(sm, memory_data, max_retries=3):
+    """Add memory with exponential backoff retry logic"""
+    for attempt in range(max_retries + 1):
+        try:
+            return sm.memories.create(**memory_data)
+        except RateLimitError as e:
+            if attempt == max_retries:
+                raise
+            
+            wait_time = e.retry_after or (2 ** attempt)
+            print(f"Rate limited. Waiting {wait_time} seconds...")
+            time.sleep(wait_time)
+        except Exception as e:
+            if attempt == max_retries:
+                raise
+            
+            wait_time = 2 ** attempt
+            print(f"Error occurred. Retrying in {wait_time} seconds...")
+            time.sleep(wait_time)
+
+# Usage
+memory_data = {
+    "type": "page",
+    "content": "https://example.com",
+    "spaces": ["space-uuid"]
+}
+
+try:
+    memory = add_memory_with_retry(sm, memory_data)
+    print(f"Memory created: {memory['uuid']}")
+except Exception as e:
+    print(f"Failed to create memory after retries: {e}")
+```
+
+## Integration Examples
+
+### Django Integration
+
+```python
+# settings.py
+SUPERMEMORY_API_KEY = os.getenv('SUPERMEMORY_API_KEY')
+
+# models.py
+from django.db import models
+from supermemory import SuperMemory
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    url = models.URLField()
+    supermemory_uuid = models.CharField(max_length=100, blank=True)
+    
+    def save_to_supermemory(self):
+        sm = SuperMemory(api_key=settings.SUPERMEMORY_API_KEY)
+        
+        memory = sm.memories.create(
+            type="page",
+            content=self.url,
+            spaces=["articles-space-uuid"]
+        )
+        
+        self.supermemory_uuid = memory['uuid']
+        self.save()
+
+# views.py
+from django.shortcuts import render
+from supermemory import SuperMemory
+
+def search_view(request):
+    query = request.GET.get('q', '')
+    if query:
+        sm = SuperMemory(api_key=settings.SUPERMEMORY_API_KEY)
+        results = sm.search(query=query, limit=20)
+        return render(request, 'search_results.html', {
+            'query': query,
+            'results': results['results']
+        })
+    return render(request, 'search.html')
+```
+
+### FastAPI Integration
+
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from supermemory import SuperMemory
+import os
+
+app = FastAPI()
+
+def get_supermemory():
+    return SuperMemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
+
+@app.post("/memories/")
+async def create_memory(
+    memory_data: dict,
+    sm: SuperMemory = Depends(get_supermemory)
+):
+    try:
+        memory = sm.memories.create(**memory_data)
+        return {"success": True, "memory": memory}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/search/")
+async def search_memories(
+    q: str,
+    limit: int = 10,
+    sm: SuperMemory = Depends(get_supermemory)
+):
+    try:
+        results = sm.search(query=q, limit=limit)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/chat/")
+async def chat_with_knowledge(
+    messages: list,
+    sm: SuperMemory = Depends(get_supermemory)
+):
+    try:
+        response = sm.chat(messages=messages)
+        # Collect streaming response
+        full_response = ""
+        for chunk in response:
+            full_response += chunk.get("content", "")
+        return {"response": full_response}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+```
+
+### Data Science Workflow
+
+```python
+import pandas as pd
+from supermemory import SuperMemory
+import matplotlib.pyplot as plt
+
+# Initialize SuperMemory
+sm = SuperMemory(api_key="your_api_key")
+
+# Analyze your knowledge base
+def analyze_knowledge_base():
+    # Get all memories
+    memories = sm.memories.list(count=1000)
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(memories['items'])
+    
+    # Analyze content types
+    type_counts = df['type'].value_counts()
+    print("Content types:")
+    print(type_counts)
+    
+    # Analyze creation dates
+    df['createdAt'] = pd.to_datetime(df['createdAt'])
+    monthly_counts = df.groupby(df['createdAt'].dt.to_period('M')).size()
+    
+    # Plot timeline
+    plt.figure(figsize=(12, 6))
+    monthly_counts.plot(kind='line')
+    plt.title('Knowledge Base Growth Over Time')
+    plt.xlabel('Month')
+    plt.ylabel('Memories Added')
+    plt.show()
+    
+    return df
+
+# Search and analyze topics
+def analyze_topics(topic):
+    results = sm.search(query=topic, limit=50)
+    
+    # Extract insights from search results
+    similarities = [r['similarity'] for r in results['results']]
+    
+    print(f"Topic: {topic}")
+    print(f"Found: {len(results['results'])} related memories")
+    print(f"Average relevance: {sum(similarities)/len(similarities):.3f}")
+    
+    return results
+
+# Usage
+df = analyze_knowledge_base()
+python_results = analyze_topics("Python programming")
+ml_results = analyze_topics("machine learning")
+```
+
+## Testing
+
+### Unit Testing
+
+```python
+import unittest
+from unittest.mock import Mock, patch
+from supermemory import SuperMemory
+
+class TestSuperMemory(unittest.TestCase):
+    def setUp(self):
+        self.sm = SuperMemory(api_key="test_key")
+    
+    @patch('supermemory.client.requests.get')
+    def test_get_user(self, mock_get):
+        # Mock API response
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "id": 123,
+            "email": "test@example.com",
+            "firstName": "Test",
+            "lastName": "User"
+        }
+        mock_response.status_code = 200
+        mock_get.return_value = mock_response
+        
+        # Test the method
+        user = self.sm.user.get()
+        
+        # Assertions
+        self.assertEqual(user['email'], 'test@example.com')
+        mock_get.assert_called_once()
+    
+    @patch('supermemory.client.requests.post')
+    def test_create_memory(self, mock_post):
+        # Mock API response
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "uuid": "test-uuid",
+            "title": "Test Memory",
+            "type": "note"
+        }
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+        
+        # Test the method
+        memory = self.sm.memories.create(
+            type="note",
+            content="Test content"
+        )
+        
+        # Assertions
+        self.assertEqual(memory['uuid'], 'test-uuid')
+        mock_post.assert_called_once()
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Integration Testing
+
+```python
+import pytest
+from supermemory import SuperMemory
+import os
+
+@pytest.fixture
+def supermemory_client():
+    api_key = os.getenv("SUPERMEMORY_TEST_API_KEY")
+    if not api_key:
+        pytest.skip("SUPERMEMORY_TEST_API_KEY not set")
+    return SuperMemory(api_key=api_key)
+
+def test_user_operations(supermemory_client):
+    """Test basic user operations"""
+    user = supermemory_client.user.get()
+    assert 'email' in user
+    assert 'uuid' in user
+
+def test_memory_lifecycle(supermemory_client):
+    """Test complete memory lifecycle"""
+    # Create memory
+    memory = supermemory_client.memories.create(
+        type="note",
+        content="Test memory for integration testing"
+    )
+    
+    assert 'uuid' in memory
+    memory_uuid = memory['uuid']
+    
+    # Retrieve memory
+    retrieved = supermemory_client.memories.get(memory_uuid)
+    assert retrieved['uuid'] == memory_uuid
+    
+    # Search for memory
+    results = supermemory_client.search(query="integration testing")
+    assert len(results['results']) > 0
+    
+    # Delete memory
+    supermemory_client.memories.delete(memory_uuid)
+    
+    # Verify deletion
+    with pytest.raises(Exception):  # Should raise NotFoundError
+        supermemory_client.memories.get(memory_uuid)
+
+def test_search_functionality(supermemory_client):
+    """Test search capabilities"""
+    results = supermemory_client.search(
+        query="python programming",
+        limit=5
+    )
+    
+    assert 'results' in results
+    assert len(results['results']) <= 5
+    
+    for result in results['results']:
+        assert 'document' in result
+        assert 'similarity' in result
+        assert 0 <= result['similarity'] <= 1
+```
+
+## Performance Optimization
+
+### Connection Pooling
+
+```python
+from supermemory import SuperMemory
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+# Custom session with connection pooling
+session = requests.Session()
+
+# Retry strategy
+retry_strategy = Retry(
+    total=3,
+    status_forcelist=[429, 500, 502, 503, 504],
+    method_whitelist=["HEAD", "GET", "OPTIONS", "POST", "PUT", "DELETE"],
+    backoff_factor=1
+)
+
+adapter = HTTPAdapter(
+    max_retries=retry_strategy,
+    pool_connections=20,
+    pool_maxsize=20
+)
+
+session.mount("http://", adapter)
+session.mount("https://", adapter)
+
+# Use custom session
+sm = SuperMemory(
+    api_key="your_api_key",
+    session=session
+)
+```
+
+### Batch Processing
+
+```python
+import asyncio
+from supermemory import AsyncSuperMemory
+
+async def process_urls_efficiently(urls, batch_size=10):
+    """Process URLs in batches for better performance"""
+    sm = AsyncSuperMemory(api_key="your_api_key")
+    
+    results = []
+    
+    for i in range(0, len(urls), batch_size):
+        batch = urls[i:i + batch_size]
+        
+        # Process batch concurrently
+        tasks = [
+            sm.memories.create(type="page", content=url)
+            for url in batch
+        ]
+        
+        batch_results = await asyncio.gather(*tasks, return_exceptions=True)
+        results.extend(batch_results)
+        
+        # Small delay between batches to respect rate limits
+        await asyncio.sleep(1)
+    
+    await sm.close()
+    return results
+
+# Usage
+urls = ["https://example1.com", "https://example2.com", ...]
+results = asyncio.run(process_urls_efficiently(urls))
+```
+
+## API Reference
+
+For complete Python SDK documentation:
+
+<CardGroup cols={2}>
+  <Card
+    title="API Reference"
+    href="/api-reference/introduction"
+    icon="book"
+  >
+    Complete REST API documentation
+  </Card>
+  <Card
+    title="Source Code"
+    href="https://github.com/DeNIRMAL/memory2/tree/main/packages/python-sdk"
+    icon="code"
+  >
+    Python SDK source code and examples
+  </Card>
+</CardGroup>
+
+---
+
+The Python SDK provides a complete, Pythonic interface to SuperMemory's API, with support for both synchronous and asynchronous operations, comprehensive error handling, and extensive integration examples.

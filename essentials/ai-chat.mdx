@@ -1,0 +1,382 @@
+---
+title: 'AI Chat'
+description: 'Chat with your knowledge using SuperMemory AI assistant'
+---
+
+## Overview
+
+SuperMemory's AI Chat feature transforms your saved knowledge into an interactive conversation partner. Instead of just searching through your memories, you can now ask questions, get summaries, find connections, and explore your knowledge through natural conversation.
+
+## How AI Chat Works
+
+SuperMemory's AI Chat combines:
+
+<CardGroup cols={2}>
+  <Card
+    title="Your Personal Context"
+    icon="brain"
+  >
+    AI has access to all your saved memories and understands their content
+  </Card>
+  <Card
+    title="Advanced Reasoning"
+    icon="cogs"
+  >
+    Powered by state-of-the-art language models that can analyze and synthesize
+  </Card>
+  <Card
+    title="Semantic Understanding"
+    icon="search"
+  >
+    Goes beyond keyword matching to understand meaning and context
+  </Card>
+  <Card
+    title="Conversational Memory"
+    icon="comments"
+  >
+    Remembers your conversation context for follow-up questions
+  </Card>
+</CardGroup>
+
+## Starting a Chat
+
+### From the Dashboard
+1. Click the "Chat" button in your SuperMemory dashboard
+2. Type your question or request
+3. The AI will search your memories and provide a comprehensive response
+4. Continue the conversation with follow-up questions
+
+### Via API
+```bash
+curl -X POST https://api.vevibe.com/v1/chat \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": "What are the main themes in my saved articles about AI?"
+      }
+    ]
+  }'
+```
+
+## Types of Questions You Can Ask
+
+### Content Discovery
+- "What did I save about machine learning last month?"
+- "Find articles related to productivity and time management"
+- "Show me notes from my research on climate change"
+
+### Summarization
+- "Summarize all my saved content about React best practices"
+- "What are the key points from my meeting notes this week?"
+- "Give me a digest of recent articles I've saved"
+
+### Analysis and Insights
+- "What patterns do you see in my learning interests?"
+- "Compare different perspectives on remote work from my saved articles"
+- "What connections exist between my work notes and personal learning?"
+
+### Specific Information Retrieval
+- "Where did I save that article about database optimization?"
+- "What were the main recommendations from that productivity book?"
+- "Find the statistics I saved about renewable energy adoption"
+
+## Advanced Chat Features
+
+### Thread Management
+
+Chat conversations are organized in threads that you can:
+
+<Tabs>
+  <Tab title="Create & Name">
+    - Start new threads for different topics
+    - Give threads descriptive names
+    - Organize conversations by project or subject
+  </Tab>
+  <Tab title="Continue & Reference">
+    - Pick up previous conversations where you left off
+    - Reference earlier parts of the conversation
+    - Build on previous insights and analyses
+  </Tab>
+  <Tab title="Share & Collaborate">
+    - Share chat threads with space collaborators
+    - Collaborative exploration of shared knowledge
+    - Team insights and discussions
+  </Tab>
+</Tabs>
+
+### Context-Aware Responses
+
+The AI understands various types of context:
+
+<AccordionGroup>
+  <Accordion title="Temporal Context">
+    Understands when you saved content and can focus on recent or historical information as needed.
+  </Accordion>
+
+  <Accordion title="Space Context">
+    Can limit responses to specific spaces or combine insights across multiple spaces.
+  </Accordion>
+
+  <Accordion title="Content Type Context">
+    Treats different content types appropriately (academic papers vs. tweets vs. personal notes).
+  </Accordion>
+
+  <Accordion title="Conversation Context">
+    Remembers what you've discussed and builds on previous exchanges.
+  </Accordion>
+</AccordionGroup>
+
+### Citation and Source Tracking
+
+Every AI response includes:
+
+- **Source References**: Direct links to the memories used in the response
+- **Confidence Indicators**: How certain the AI is about specific claims
+- **Quote Extraction**: Relevant passages from your saved content
+- **Memory Timestamps**: When the referenced content was saved
+
+## Chat Commands and Modifiers
+
+Enhance your chat experience with special commands:
+
+### Space-Specific Queries
+```
+@workspace: What are the main themes in my work space?
+@personal: Show me learning materials from my personal space
+@research: Summarize findings from my research space
+```
+
+### Time-Based Filters
+```
+recent: What have I saved recently about AI?
+last-week: Summarize content from last week
+2024: What were my main interests in 2024?
+```
+
+### Content Type Filters
+```
+papers: Find academic papers about neural networks
+notes: Show my personal notes about productivity
+tweets: What tweets did I save about startups?
+```
+
+### Analysis Commands
+```
+compare: Compare different viewpoints on remote work
+trends: What trends do you see in my saved content?
+connections: Find unexpected connections in my knowledge
+gaps: What topics am I missing information on?
+```
+
+## Best Practices for AI Chat
+
+### Asking Effective Questions
+
+<CardGroup cols={2}>
+  <Card
+    title="Be Specific"
+    icon="target"
+  >
+    "Find React performance optimization techniques" vs. "Find React stuff"
+  </Card>
+  <Card
+    title="Provide Context"
+    icon="context"
+  >
+    "For my current project on e-commerce, what payment processing options did I research?"
+  </Card>
+  <Card
+    title="Use Natural Language"
+    icon="comment-alt"
+  >
+    Ask questions as you would to a knowledgeable colleague
+  </Card>
+  <Card
+    title="Build on Responses"
+    icon="layer-group"
+  >
+    Use follow-up questions to dive deeper into interesting points
+  </Card>
+</CardGroup>
+
+### Conversation Strategies
+
+#### Progressive Refinement
+1. Start with a broad question
+2. Narrow down based on the response
+3. Ask for specific examples or details
+4. Request actionable insights
+
+#### Example Flow:
+```
+You: "What have I learned about productivity?"
+AI: [Provides overview of productivity content]
+
+You: "Focus on time management techniques specifically"
+AI: [Narrows to time management methods]
+
+You: "Which of these would work best for a developer?"
+AI: [Tailors recommendations to development work]
+
+You: "Give me a practical implementation plan"
+AI: [Provides actionable steps]
+```
+
+### Maximizing AI Insights
+
+<Steps>
+  <Step title="Regular Knowledge Reviews">
+    Periodically ask the AI to summarize your learning or identify patterns
+  </Step>
+  <Step title="Cross-Reference Topics">
+    Ask about connections between different areas of interest
+  </Step>
+  <Step title="Challenge Your Assumptions">
+    Ask the AI to present different perspectives on topics you think you understand
+  </Step>
+  <Step title="Identify Knowledge Gaps">
+    Request suggestions for areas where your knowledge could be expanded
+  </Step>
+</Steps>
+
+## Chat Integrations
+
+### Slack Integration
+```bash
+# Coming Soon: Slack bot integration
+/supermemory search "machine learning papers"
+/supermemory chat "Summarize this week's saved articles"
+```
+
+### Discord Bot
+```bash
+# Coming Soon: Discord bot commands
+!sm search "productivity tips"
+!sm chat "What did I learn about React hooks?"
+```
+
+### API Chat Integration
+Build custom chat interfaces:
+
+```javascript
+// Example: Custom chat widget
+const response = await fetch('https://api.vevibe.com/v1/chat', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    messages: [
+      { role: 'user', content: userQuestion },
+    ],
+    threadId: currentThreadId, // Optional: continue existing conversation
+  }),
+});
+
+const stream = response.body;
+// Handle streaming response
+```
+
+## Privacy and Security
+
+### Data Privacy
+- **Local Processing**: Sensitive analysis happens in secure, isolated environments
+- **No Training Data**: Your conversations don't train external AI models
+- **Encryption**: All chat data is encrypted in transit and at rest
+- **Access Control**: Only you can access your personal chat history
+
+### Response Accuracy
+<Warning>
+While SuperMemory's AI is highly accurate, always verify important information by checking the original sources provided in chat responses.
+</Warning>
+
+- **Source Verification**: Always check cited sources for important decisions
+- **Confidence Levels**: Pay attention to AI confidence indicators
+- **Multiple Perspectives**: Ask for different viewpoints on complex topics
+- **Fact Checking**: Cross-reference with original memories when needed
+
+## Troubleshooting Chat Issues
+
+### Common Problems
+
+<AccordionGroup>
+  <Accordion title="AI can't find relevant content">
+    - Ensure your question relates to content you've actually saved
+    - Try rephrasing with different keywords
+    - Check that content processing completed successfully
+    - Verify you're searching in the right spaces
+  </Accordion>
+
+  <Accordion title="Responses seem incomplete">
+    - Ask for more details or examples
+    - Check if there are processing errors in referenced memories
+    - Try breaking complex questions into smaller parts
+    - Ensure you have sufficient content on the topic
+  </Accordion>
+
+  <Accordion title="Chat thread not loading">
+    - Check your internet connection
+    - Verify your API key is still valid
+    - Try refreshing the page or restarting the app
+    - Contact support if the issue persists
+  </Accordion>
+
+  <Accordion title="Slow response times">
+    - Large knowledge bases may take longer to search
+    - Complex questions require more processing time
+    - Check system status for any known issues
+    - Consider breaking very complex queries into parts
+  </Accordion>
+</AccordionGroup>
+
+## Recommended Questions to Get Started
+
+Try these example questions to explore your knowledge:
+
+<Tabs>
+  <Tab title="Discovery">
+    - "What are my most saved topics?"
+    - "Show me content I haven't revisited recently"
+    - "What themes appear across different spaces?"
+    - "Find surprising connections in my knowledge"
+  </Tab>
+  <Tab title="Learning">
+    - "What should I learn next based on my interests?"
+    - "Identify gaps in my knowledge about [topic]"
+    - "What conflicting viewpoints have I saved?"
+    - "Create a learning path for [skill/topic]"
+  </Tab>
+  <Tab title="Productivity">
+    - "Summarize this week's important learnings"
+    - "What actionable insights can you extract?"
+    - "Find relevant content for my current project"
+    - "What patterns do you see in my work notes?"
+  </Tab>
+</Tabs>
+
+## API Reference
+
+For detailed chat API documentation:
+
+<CardGroup cols={2}>
+  <Card
+    title="Chat API"
+    href="/api-reference/ai/chat"
+  >
+    Complete API reference for chat functionality
+  </Card>
+  <Card
+    title="Search API"
+    href="/api-reference/ai/search"
+  >
+    Semantic search endpoints and options
+  </Card>
+</CardGroup>
+
+---
+
+AI Chat transforms SuperMemory from a passive storage system into an active thinking partner. By engaging with your knowledge through conversation, you'll discover insights, connections, and patterns that might otherwise remain hidden in your growing collection of memories.

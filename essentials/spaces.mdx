@@ -1,0 +1,321 @@
+---
+title: 'Spaces'
+description: 'Organize and share your knowledge with intelligent spaces'
+---
+
+## What are Spaces?
+
+Spaces in SuperMemory are intelligent containers that help you organize your knowledge by topic, project, or any categorization that makes sense for your workflow. Think of them as smart folders that not only store your memories but also enable powerful collaboration and AI-enhanced discovery.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card
+    title="Smart Organization"
+    icon="folder-tree"
+  >
+    Automatically categorize and organize your memories
+  </Card>
+  <Card
+    title="Granular Permissions"
+    icon="shield-check"
+  >
+    Control who can read, edit, or manage your spaces
+  </Card>
+  <Card
+    title="AI-Powered Insights"
+    icon="lightbulb"
+  >
+    Get intelligent suggestions and connections within spaces
+  </Card>
+  <Card
+    title="Seamless Collaboration"
+    icon="users"
+  >
+    Share knowledge and collaborate with team members
+  </Card>
+</CardGroup>
+
+## Creating Spaces
+
+### From the Dashboard
+
+<Steps>
+  <Step title="Navigate to Spaces">
+    Click on the "Spaces" tab in your SuperMemory dashboard
+  </Step>
+  <Step title="Create New Space">
+    Click the "Create Space" button
+  </Step>
+  <Step title="Configure Settings">
+    - **Name**: Give your space a descriptive name
+    - **Visibility**: Choose between Private or Public
+    - **Description**: Add a brief description (optional)
+  </Step>
+  <Step title="Set Initial Permissions">
+    Decide if you want to invite collaborators immediately
+  </Step>
+</Steps>
+
+### Via API
+
+```bash
+curl -X POST https://api.vevibe.com/v1/spaces/create \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "spaceName": "My Research Project",
+    "isPublic": false
+  }'
+```
+
+## Managing Spaces
+
+### Space Settings
+
+Each space has comprehensive settings you can configure:
+
+<Tabs>
+  <Tab title="General">
+    - **Name**: Update the space name
+    - **Description**: Add or modify the description
+    - **Visibility**: Toggle between private and public
+  </Tab>
+  <Tab title="Members">
+    - **Owner**: Transfer ownership to another user
+    - **Collaborators**: Manage read/edit permissions
+    - **Invitations**: Send and manage pending invitations
+  </Tab>
+  <Tab title="Content">
+    - **Auto-organization**: Enable AI-powered content categorization
+    - **Import settings**: Configure bulk import preferences
+    - **Export options**: Set up data export formats
+  </Tab>
+</Tabs>
+
+### Space Permissions
+
+SuperMemory offers flexible permission levels:
+
+| Permission Level | Can Read | Can Add Content | Can Edit Content | Can Manage Space |
+|------------------|----------|-----------------|------------------|------------------|
+| **Read**         | ✅       | ❌              | ❌               | ❌               |
+| **Edit**         | ✅       | ✅              | ✅               | ❌               |
+| **Admin**        | ✅       | ✅              | ✅               | ✅               |
+| **Owner**        | ✅       | ✅              | ✅               | ✅               |
+
+## Working with Content in Spaces
+
+### Adding Content to Spaces
+
+There are several ways to add content to your spaces:
+
+#### 1. During Memory Creation
+When adding new memories, you can specify which spaces to include them in:
+
+```bash
+curl -X POST https://api.vevibe.com/v1/add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "page",
+    "content": "https://example.com/article",
+    "spaces": ["space-uuid-1", "space-uuid-2"]
+  }'
+```
+
+#### 2. Moving Existing Content
+You can move memories between spaces:
+
+```bash
+curl -X POST https://api.vevibe.com/v1/spaces/moveContent \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "spaceId": "target-space-uuid",
+    "documentId": "memory-uuid"
+  }'
+```
+
+#### 3. Browser Extension
+When saving content with the browser extension, select the target space from the dropdown.
+
+### Content Organization
+
+SuperMemory automatically helps organize content within spaces:
+
+<AccordionGroup>
+  <Accordion title="AI-Powered Categorization">
+    Our AI analyzes your content and suggests relevant tags and categories, making it easier to find related information later.
+  </Accordion>
+
+  <Accordion title="Smart Recommendations">
+    Get suggestions for related content within the same space, helping you discover connections you might have missed.
+  </Accordion>
+
+  <Accordion title="Automatic Tagging">
+    Content is automatically tagged based on its type, source, and content analysis, creating a rich metadata layer.
+  </Accordion>
+</AccordionGroup>
+
+## Collaboration Features
+
+### Inviting Members
+
+<Steps>
+  <Step title="Access Space Settings">
+    Go to your space and click the settings icon
+  </Step>
+  <Step title="Navigate to Members">
+    Click on the "Members" tab
+  </Step>
+  <Step title="Send Invitation">
+    Enter the email address and select permission level
+  </Step>
+  <Step title="Custom Message">
+    Add a personal message explaining the space's purpose
+  </Step>
+</Steps>
+
+### Managing Invitations
+
+Recipients can accept or reject invitations through:
+- Email notification with direct links
+- Dashboard notifications
+- API endpoints for programmatic management
+
+```bash
+# Accept an invitation
+curl -X POST https://api.vevibe.com/v1/spaces/invites/accept \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "spaceId": "space-uuid"
+  }'
+```
+
+## Advanced Features
+
+### Space Analytics
+
+Get insights into your space usage:
+
+- **Content Growth**: Track how your knowledge base grows over time
+- **Collaboration Metrics**: See how team members contribute
+- **Search Patterns**: Understand what content is accessed most
+- **AI Interactions**: Monitor chat and search usage within the space
+
+### Bulk Operations
+
+Efficiently manage large amounts of content:
+
+```bash
+# Bulk add URLs to a space
+curl -X POST https://api.vevibe.com/v1/bulk-add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "urls": [
+      "https://example1.com",
+      "https://example2.com",
+      "https://example3.com"
+    ],
+    "spaces": ["space-uuid"]
+  }'
+```
+
+### Space Templates
+
+Create reusable space configurations:
+
+<CardGroup cols={2}>
+  <Card
+    title="Research Project"
+    icon="microscope"
+  >
+    Pre-configured for academic research with citation management
+  </Card>
+  <Card
+    title="Team Knowledge Base"
+    icon="building"
+  >
+    Optimized for team collaboration with role-based permissions
+  </Card>
+  <Card
+    title="Personal Learning"
+    icon="graduation-cap"
+  >
+    Designed for individual learning and skill development
+  </Card>
+  <Card
+    title="Content Curation"
+    icon="bookmark"
+  >
+    Perfect for collecting and organizing content from various sources
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Warning>
+**Space Naming Convention**: Use clear, descriptive names that indicate the space's purpose. Avoid generic names like "Misc" or "Random".
+</Warning>
+
+### Organizing Your Spaces
+
+1. **By Project**: Create spaces for each major project or initiative
+2. **By Topic**: Organize around subjects or areas of interest
+3. **By Team**: Set up spaces for different team collaborations
+4. **By Time**: Create quarterly or yearly spaces for time-based organization
+
+### Content Management Tips
+
+- **Regular Cleanup**: Periodically review and remove outdated content
+- **Consistent Tagging**: Develop a tagging strategy and stick to it
+- **Description Updates**: Keep space descriptions current as purposes evolve
+- **Permission Reviews**: Regularly audit who has access to sensitive spaces
+
+## API Reference
+
+For detailed API documentation on spaces, see:
+
+<CardGroup cols={2}>
+  <Card
+    title="Spaces API"
+    href="/api-reference/spaces/list-spaces"
+  >
+    Complete API reference for space management
+  </Card>
+  <Card
+    title="Content Management"
+    href="/api-reference/spaces/add-content"
+  >
+    APIs for managing content within spaces
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Can't see shared space">
+    Check your email for invitation links and ensure you're logged into the correct account.
+  </Accordion>
+
+  <Accordion title="Permission denied errors">
+    Verify your permission level in the space. Contact the space owner if you need elevated access.
+  </Accordion>
+
+  <Accordion title="Content not appearing in space">
+    Content may still be processing. Check the memory's status in your dashboard.
+  </Accordion>
+
+  <Accordion title="Invitation not received">
+    Check spam folders and verify the email address. Space owners can resend invitations.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+Spaces are the foundation of organized knowledge management in SuperMemory. By thoughtfully creating and managing your spaces, you'll build a powerful, searchable knowledge base that grows more valuable over time.

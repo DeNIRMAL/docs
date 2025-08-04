@@ -1,0 +1,594 @@
+---
+title: 'API Keys'
+description: 'Generate and manage API keys for programmatic access to SuperMemory'
+---
+
+## Overview
+
+API keys provide secure, programmatic access to your SuperMemory account. Whether you're building custom integrations, automating content workflows, or developing applications that leverage your knowledge base, API keys are your gateway to SuperMemory's powerful features.
+
+## Getting Your API Key
+
+### Via Dashboard
+
+<Steps>
+  <Step title="Navigate to Settings">
+    Go to your SuperMemory dashboard and click on Settings
+  </Step>
+  <Step title="Access Integrations">
+    Click on the "Integrations" or "API Keys" section
+  </Step>
+  <Step title="Generate Key">
+    Click "Generate API Key" to create a new key
+  </Step>
+  <Step title="Copy and Store">
+    Copy your API key immediately and store it securely
+  </Step>
+</Steps>
+
+<Warning>
+API keys are only shown once when generated. Make sure to copy and store your key securely before leaving the page.
+</Warning>
+
+### Via API
+
+You can also generate API keys programmatically if you're already authenticated:
+
+```bash
+curl -X POST https://api.vevibe.com/v1/user/key \
+  -H "Authorization: Bearer EXISTING_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+## Using API Keys
+
+### Authentication Format
+
+SuperMemory uses Bearer token authentication. Include your API key in the Authorization header:
+
+```bash
+Authorization: Bearer your_api_key_here
+```
+
+### Example Requests
+
+<Tabs>
+  <Tab title="cURL">
+    ```bash
+    # Get user information
+    curl -H "Authorization: Bearer YOUR_API_KEY" \
+         https://api.vevibe.com/v1/user
+
+    # Add a memory
+    curl -X POST https://api.vevibe.com/v1/add \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "type": "page",
+        "content": "https://example.com/article"
+      }'
+
+    # Search memories
+    curl -X POST https://api.vevibe.com/v1/search \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "query": "machine learning",
+        "limit": 10
+      }'
+    ```
+  </Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    const API_KEY = 'your_api_key_here';
+    const BASE_URL = 'https://api.vevibe.com';
+
+    // Helper function for authenticated requests
+    async function apiRequest(endpoint, options = {}) {
+      const response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
+      
+      return response.json();
+    }
+
+    // Examples
+    const user = await apiRequest('/v1/user');
+    
+    const newMemory = await apiRequest('/v1/add', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'note',
+        content: 'This is a test note',
+      }),
+    });
+
+    const searchResults = await apiRequest('/v1/search', {
+      method: 'POST',
+      body: JSON.stringify({
+        query: 'productivity tips',
+        limit: 5,
+      }),
+    });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import requests
+    import json
+
+    API_KEY = 'your_api_key_here'
+    BASE_URL = 'https://api.vevibe.com'
+
+    # Helper function for authenticated requests
+    def api_request(endpoint, method='GET', data=None):
+        headers = {
+            'Authorization': f'Bearer {API_KEY}',
+            'Content-Type': 'application/json',
+        }
+        
+        url = f'{BASE_URL}{endpoint}'
+        
+        if method == 'GET':
+            response = requests.get(url, headers=headers)
+        elif method == 'POST':
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+        elif method == 'DELETE':
+            response = requests.delete(url, headers=headers)
+        
+        response.raise_for_status()
+        return response.json()
+
+    # Examples
+    user = api_request('/v1/user')
+    
+    new_memory = api_request('/v1/add', 'POST', {
+        'type': 'note',
+        'content': 'This is a test note',
+    })
+
+    search_results = api_request('/v1/search', 'POST', {
+        'query': 'productivity tips',
+        'limit': 5,
+    })
+    ```
+  </Tab>
+</Tabs>
+
+## API Key Security
+
+### Best Practices
+
+<CardGroup cols={2}>
+  <Card
+    title="Store Securely"
+    icon="shield-alt"
+  >
+    Never commit API keys to version control. Use environment variables or secure key management systems.
+  </Card>
+  <Card
+    title="Rotate Regularly"
+    icon="sync-alt"
+  >
+    Generate new API keys periodically and revoke old ones to maintain security.
+  </Card>
+  <Card
+    title="Limit Scope"
+    icon="lock"
+  >
+    Only use API keys in applications that need them. Don't share keys between projects.
+  </Card>
+  <Card
+    title="Monitor Usage"
+    icon="chart-line"
+  >
+    Regularly check API key usage in your dashboard to detect any unauthorized access.
+  </Card>
+</CardGroup>
+
+### Environment Variables
+
+Store your API key as an environment variable:
+
+<Tabs>
+  <Tab title="Linux/macOS">
+    ```bash
+    # Add to ~/.bashrc or ~/.zshrc
+    export SUPERMEMORY_API_KEY="your_api_key_here"
+
+    # Use in your applications
+    echo $SUPERMEMORY_API_KEY
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    # Set environment variable
+    $env:SUPERMEMORY_API_KEY = "your_api_key_here"
+
+    # Or set permanently
+    [Environment]::SetEnvironmentVariable("SUPERMEMORY_API_KEY", "your_api_key_here", "User")
+    ```
+  </Tab>
+  <Tab title="Docker">
+    ```dockerfile
+    # In your Dockerfile
+    ENV SUPERMEMORY_API_KEY=""
+
+    # Or in docker-compose.yml
+    environment:
+      - SUPERMEMORY_API_KEY=your_api_key_here
+    ```
+  </Tab>
+</Tabs>
+
+### Key Management in Applications
+
+<AccordionGroup>
+  <Accordion title="Node.js Applications">
+    ```javascript
+    // Use dotenv for local development
+    require('dotenv').config();
+    
+    const apiKey = process.env.SUPERMEMORY_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('SUPERMEMORY_API_KEY environment variable is required');
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Python Applications">
+    ```python
+    import os
+    from dotenv import load_dotenv
+    
+    load_dotenv()
+    
+    API_KEY = os.getenv('SUPERMEMORY_API_KEY')
+    
+    if not API_KEY:
+        raise ValueError('SUPERMEMORY_API_KEY environment variable is required')
+    ```
+  </Accordion>
+
+  <Accordion title="Cloud Functions">
+    ```javascript
+    // AWS Lambda
+    const apiKey = process.env.SUPERMEMORY_API_KEY;
+    
+    // Google Cloud Functions
+    const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
+    const client = new SecretManagerServiceClient();
+    const [version] = await client.accessSecretVersion({
+      name: 'projects/PROJECT_ID/secrets/supermemory-api-key/versions/latest',
+    });
+    const apiKey = version.payload.data.toString();
+    ```
+  </Accordion>
+
+  <Accordion title="GitHub Actions">
+    ```yaml
+    # In your workflow file
+    env:
+      SUPERMEMORY_API_KEY: ${{ secrets.SUPERMEMORY_API_KEY }}
+    
+    steps:
+      - name: Use SuperMemory API
+        run: |
+          curl -H "Authorization: Bearer $SUPERMEMORY_API_KEY" \
+               https://api.vevibe.com/v1/user
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## API Key Management
+
+### Multiple Keys
+
+You can have multiple API keys for different purposes:
+
+- **Development Key**: For testing and development environments
+- **Production Key**: For live applications
+- **Integration Keys**: Specific keys for different integrations
+- **Team Keys**: If you need to share access (though user-specific keys are preferred)
+
+### Key Rotation
+
+<Steps>
+  <Step title="Generate New Key">
+    Create a new API key in your SuperMemory dashboard
+  </Step>
+  <Step title="Update Applications">
+    Update all applications and services to use the new key
+  </Step>
+  <Step title="Test Thoroughly">
+    Verify all integrations work with the new key
+  </Step>
+  <Step title="Revoke Old Key">
+    Delete the old API key to complete the rotation
+  </Step>
+</Steps>
+
+### Monitoring Usage
+
+Track your API key usage through the dashboard:
+
+- **Request Volume**: Number of API calls made
+- **Endpoint Usage**: Which endpoints are used most frequently
+- **Error Rates**: Failed requests and common error types
+- **Rate Limiting**: Whether you're approaching usage limits
+
+## Rate Limits and Quotas
+
+### Current Limits
+
+<Tabs>
+  <Tab title="Free Plan">
+    - **Requests per minute**: 60
+    - **Requests per hour**: 1,000
+    - **Daily requests**: 10,000
+    - **Bulk operations**: Limited to 10 items
+  </Tab>
+  <Tab title="Pro Plan">
+    - **Requests per minute**: 300
+    - **Requests per hour**: 10,000
+    - **Daily requests**: 100,000
+    - **Bulk operations**: Up to 100 items
+  </Tab>
+  <Tab title="Enterprise">
+    - **Custom limits**: Negotiated based on needs
+    - **Dedicated resources**: Higher performance guarantees
+    - **Priority support**: Faster response times
+    - **Custom integrations**: Tailored API features
+  </Tab>
+</Tabs>
+
+### Handling Rate Limits
+
+When you exceed rate limits, the API returns a `429 Too Many Requests` status:
+
+```javascript
+async function apiRequestWithRetry(endpoint, options, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After') || 60;
+        console.log(`Rate limited. Retrying after ${retryAfter} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        continue;
+      }
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+```
+
+## Common Use Cases
+
+### Automated Content Sync
+
+```javascript
+// Sync RSS feeds to SuperMemory
+const Parser = require('rss-parser');
+const parser = new Parser();
+
+async function syncRSSFeeds(feeds) {
+  for (const feedUrl of feeds) {
+    const feed = await parser.parseURL(feedUrl);
+    
+    for (const item of feed.items) {
+      try {
+        await apiRequest('/v1/add', {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'page',
+            content: item.link,
+            spaces: ['rss-space-id'],
+          }),
+        });
+        console.log(`Added: ${item.title}`);
+      } catch (error) {
+        console.error(`Failed to add ${item.title}:`, error);
+      }
+    }
+  }
+}
+```
+
+### Backup and Export
+
+```python
+import requests
+import json
+from datetime import datetime
+
+def backup_memories(api_key, output_file):
+    """Backup all memories to a JSON file"""
+    headers = {'Authorization': f'Bearer {api_key}'}
+    
+    all_memories = []
+    start = 0
+    count = 100
+    
+    while True:
+        response = requests.get(
+            f'https://api.vevibe.com/v1/memories?start={start}&count={count}',
+            headers=headers
+        )
+        
+        data = response.json()
+        memories = data.get('items', [])
+        
+        if not memories:
+            break
+            
+        all_memories.extend(memories)
+        start += count
+    
+    backup_data = {
+        'export_date': datetime.now().isoformat(),
+        'total_memories': len(all_memories),
+        'memories': all_memories
+    }
+    
+    with open(output_file, 'w') as f:
+        json.dump(backup_data, f, indent=2)
+    
+    print(f'Backed up {len(all_memories)} memories to {output_file}')
+```
+
+### Custom Search Interface
+
+```javascript
+// Build a custom search interface
+class SuperMemorySearch {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.baseUrl = 'https://api.vevibe.com';
+  }
+
+  async search(query, options = {}) {
+    const searchParams = {
+      query,
+      limit: options.limit || 10,
+      threshold: options.threshold || 0.7,
+      spaces: options.spaces || [],
+    };
+
+    const response = await fetch(`${this.baseUrl}/v1/search`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchParams),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Search failed: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async chat(messages, threadId = null) {
+    const chatParams = {
+      messages,
+      ...(threadId && { threadId }),
+    };
+
+    const response = await fetch(`${this.baseUrl}/v1/chat`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(chatParams),
+    });
+
+    return response.body; // Return stream for real-time responses
+  }
+}
+
+// Usage
+const search = new SuperMemorySearch(process.env.SUPERMEMORY_API_KEY);
+const results = await search.search('machine learning papers');
+```
+
+## Troubleshooting API Keys
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized">
+    - Verify your API key is correct and hasn't been revoked
+    - Check that you're including the 'Bearer ' prefix
+    - Ensure the Authorization header is properly formatted
+  </Accordion>
+
+  <Accordion title="403 Forbidden">
+    - Your API key may not have permission for this operation
+    - Check if you're trying to access another user's resources
+    - Verify your account has the necessary subscription level
+  </Accordion>
+
+  <Accordion title="429 Too Many Requests">
+    - You've exceeded the rate limit for your plan
+    - Implement exponential backoff in your retry logic
+    - Consider upgrading to a higher plan for more requests
+  </Accordion>
+
+  <Accordion title="500 Internal Server Error">
+    - Temporary server issue - try again later
+    - Check our status page for any ongoing incidents
+    - Contact support if the issue persists
+  </Accordion>
+</AccordionGroup>
+
+### Testing Your API Key
+
+Quick test to verify your API key is working:
+
+```bash
+# Test API key
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     https://api.vevibe.com/v1/user
+
+# Expected response:
+# {
+#   "id": 123,
+#   "uuid": "user-uuid",
+#   "email": "your@email.com",
+#   "firstName": "Your",
+#   "lastName": "Name"
+# }
+```
+
+## API Reference
+
+For complete API documentation:
+
+<CardGroup cols={2}>
+  <Card
+    title="Authentication Guide"
+    href="/api-reference/authentication"
+  >
+    Detailed authentication information and examples
+  </Card>
+  <Card
+    title="Complete API Reference"
+    href="/api-reference/introduction"
+  >
+    Full documentation of all available endpoints
+  </Card>
+</CardGroup>
+
+---
+
+API keys unlock the full programmatic power of SuperMemory. With proper security practices and understanding of rate limits, you can build powerful integrations and automations that enhance your knowledge management workflow.

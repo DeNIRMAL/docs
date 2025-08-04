@@ -1,0 +1,1116 @@
+openapi: 3.0.3
+info:
+  title: SuperMemory API
+  description: |
+    The SuperMemory API is a powerful RESTful service that enables you to manage your memories, spaces, and AI-powered interactions programmatically.
+    
+    SuperMemory is your AI-powered second brain that helps you save, search, and chat with your knowledge.
+  version: 1.0.0
+  contact:
+    name: SuperMemory Support
+    url: https://github.com/DeNIRMAL/memory2
+    email: support@supermemory.ai
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://api.vevibe.com
+    description: Production server
+  - url: http://localhost:8787
+    description: Development server
+    
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check if the API is healthy and operational
+      security: []
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+
+  /v1/user:
+    get:
+      tags:
+        - User
+      summary: Get user information
+      description: Retrieve current authenticated user's information
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /v1/user/spaces:
+    get:
+      tags:
+        - User
+      summary: Get user's spaces
+      description: Retrieve all spaces owned by or accessible to the user
+      responses:
+        '200':
+          description: List of user spaces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  spaces:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SpaceWithPermissions'
+
+  /v1/user/history:
+    get:
+      tags:
+        - User
+      summary: Get chat history
+      description: Retrieve user's recent chat threads
+      responses:
+        '200':
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatThread'
+
+  /v1/user/key:
+    get:
+      tags:
+        - User
+      summary: Get API key
+      description: Retrieve user's current API key
+      responses:
+        '200':
+          description: API key information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Encrypted API key
+                  decrypted:
+                    type: string
+                    description: Plain text API key
+    post:
+      tags:
+        - User
+      summary: Generate new API key
+      description: Generate a new API key for the user
+      responses:
+        '200':
+          description: New API key generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Encrypted API key
+                  decrypted:
+                    type: string
+                    description: Plain text API key
+
+  /v1/user/invitations:
+    get:
+      tags:
+        - User
+      summary: Get space invitations
+      description: Retrieve pending space invitations for the user
+      responses:
+        '200':
+          description: List of invitations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SpaceInvitation'
+
+  /v1/spaces:
+    get:
+      tags:
+        - Spaces
+      summary: Get all spaces
+      description: Retrieve all spaces accessible to the user
+      responses:
+        '200':
+          description: List of spaces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  spaces:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SpaceWithPermissions'
+
+  /v1/spaces/create:
+    post:
+      tags:
+        - Spaces
+      summary: Create space
+      description: Create a new space
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - spaceName
+                - isPublic
+              properties:
+                spaceName:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  description: Name of the space
+                isPublic:
+                  type: boolean
+                  description: Whether the space is public
+      responses:
+        '200':
+          description: Space created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  space:
+                    $ref: '#/components/schemas/Space'
+
+  /v1/spaces/{spaceId}:
+    get:
+      tags:
+        - Spaces
+      summary: Get space details
+      description: Retrieve details of a specific space
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Space UUID
+      responses:
+        '200':
+          description: Space details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceWithPermissions'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+        - Spaces
+      summary: Update space
+      description: Update space name (owner only)
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Space UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        '200':
+          description: Space updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  name:
+                    type: string
+    delete:
+      tags:
+        - Spaces
+      summary: Delete space
+      description: Delete a space (owner only)
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Space UUID
+      responses:
+        '200':
+          description: Space deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/spaces/{spaceId}/favorite:
+    post:
+      tags:
+        - Spaces
+      summary: Favorite space
+      description: Add space to user's favorites
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Space UUID
+      responses:
+        '200':
+          description: Space favorited successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /v1/spaces/{spaceId}/invite:
+    post:
+      tags:
+        - Spaces
+      summary: Invite user to space
+      description: Send invitation to user to join space
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Space UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - accessType
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email of user to invite
+                accessType:
+                  type: string
+                  enum: [read, edit]
+                  description: Access level to grant
+      responses:
+        '200':
+          description: Invitation sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/spaces/invites/{action}:
+    post:
+      tags:
+        - Spaces
+      summary: Accept or reject space invitation
+      description: Accept or reject a pending space invitation
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [accept, reject]
+          description: Action to take on invitation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - spaceId
+              properties:
+                spaceId:
+                  type: string
+                  description: Space UUID
+      responses:
+        '200':
+          description: Invitation processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/spaces/addContent:
+    post:
+      tags:
+        - Spaces
+      summary: Add content to space
+      description: Add existing memory to a space
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - spaceId
+                - documentId
+              properties:
+                spaceId:
+                  type: string
+                  description: Space UUID or "<HOME>" for personal space
+                documentId:
+                  type: string
+                  description: Document UUID
+      responses:
+        '200':
+          description: Content added to space successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/spaces/moveContent:
+    post:
+      tags:
+        - Spaces
+      summary: Move content between spaces
+      description: Move content from one space to another
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - spaceId
+                - documentId
+              properties:
+                spaceId:
+                  type: string
+                  description: Target space UUID or "<HOME>" for personal space
+                documentId:
+                  type: string
+                  description: Document UUID
+      responses:
+        '200':
+          description: Content moved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/memories:
+    get:
+      tags:
+        - Memories
+      summary: Get memories
+      description: Retrieve user's memories with pagination
+      parameters:
+        - name: start
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Offset for pagination
+        - name: count
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+          description: Number of items to return
+        - name: spaceId
+          in: query
+          schema:
+            type: string
+          description: Filter by space UUID
+      responses:
+        '200':
+          description: List of memories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Memory'
+                  total:
+                    type: integer
+                    description: Total number of memories
+
+  /v1/memories/{memoryId}:
+    get:
+      tags:
+        - Memories
+      summary: Get memory details
+      description: Retrieve details of a specific memory
+      parameters:
+        - name: memoryId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Memory UUID
+      responses:
+        '200':
+          description: Memory details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Memory'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Memories
+      summary: Delete memory
+      description: Delete a specific memory
+      parameters:
+        - name: memoryId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Memory UUID
+      responses:
+        '200':
+          description: Memory deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /v1/memories/batch-delete:
+    post:
+      tags:
+        - Memories
+      summary: Batch delete memories
+      description: Delete multiple memories at once
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of memory UUIDs to delete
+      responses:
+        '200':
+          description: Memories deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  deletedCount:
+                    type: integer
+
+  /v1/add:
+    post:
+      tags:
+        - Content
+      summary: Add memory
+      description: Add new memory/content to SuperMemory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - content
+              properties:
+                type:
+                  type: string
+                  enum: [page, note, tweet, document]
+                  description: Type of content
+                content:
+                  type: string
+                  description: URL or text content
+                url:
+                  type: string
+                  description: Original URL (for page type)
+                spaces:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 5
+                  description: Space UUIDs to add content to
+                prefetched:
+                  $ref: '#/components/schemas/PrefetchedContent'
+      responses:
+        '200':
+          description: Content added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  uuid:
+                    type: string
+                    description: Generated memory UUID
+                  type:
+                    type: string
+        '409':
+          description: Content already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /v1/bulk-add:
+    post:
+      tags:
+        - Content
+      summary: Bulk add content
+      description: Add multiple pieces of content at once (streaming response)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                urls:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of URLs to add
+                contents:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of text content to add
+                spaces:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 5
+                  description: Space UUIDs to add content to
+              anyOf:
+                - required: [urls]
+                - required: [contents]
+      responses:
+        '200':
+          description: Streaming response with progress updates
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /v1/reprocess-missing-metadata:
+    post:
+      tags:
+        - Content
+      summary: Reprocess missing metadata
+      description: Queue memories with missing metadata for reprocessing
+      responses:
+        '200':
+          description: Reprocessing queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  processed:
+                    type: integer
+                  failed:
+                    type: integer
+                  total:
+                    type: integer
+
+  /v1/search:
+    post:
+      tags:
+        - AI & Search
+      summary: Search memories
+      description: Perform semantic search across memories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  minLength: 1
+                  description: Search query
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 50
+                  default: 10
+                  description: Maximum number of results
+                threshold:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  default: 0
+                  description: Similarity threshold
+                spaces:
+                  type: array
+                  items:
+                    type: string
+                  description: Space UUIDs to search within
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+
+  /v1/chat:
+    post:
+      tags:
+        - AI & Search
+      summary: Chat with AI
+      description: Start or continue a chat conversation with AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ChatMessage'
+                  minItems: 1
+                  description: Chat messages
+                threadId:
+                  type: string
+                  description: Optional thread ID for continuing conversation
+      responses:
+        '200':
+          description: Streaming chat response
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /v1/recommended-questions:
+    get:
+      tags:
+        - AI & Search
+      summary: Get recommended questions
+      description: Get AI-generated questions based on user's content
+      responses:
+        '200':
+          description: List of recommended questions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      type: string
+
+  /v1/suggested-learnings:
+    get:
+      tags:
+        - AI & Search
+      summary: Get suggested learnings
+      description: Get AI-suggested learning topics based on user's content
+      responses:
+        '200':
+          description: List of suggested learnings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestedLearnings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SuggestedLearning'
+
+  /v1/integrations/notion/import:
+    get:
+      tags:
+        - Integrations
+      summary: Import from Notion
+      description: Import content from Notion (requires OAuth)
+      responses:
+        '200':
+          description: Import successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  imported:
+                    type: integer
+                  message:
+                    type: string
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: |
+        Use your SuperMemory API key as a Bearer token.
+        
+        Get your API key from the SuperMemory dashboard under Settings > Integrations.
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        emailVerified:
+          type: boolean
+        profilePictureUrl:
+          type: string
+          format: uri
+
+    Space:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+        name:
+          type: string
+        isPublic:
+          type: boolean
+        ownerId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    SpaceWithPermissions:
+      allOf:
+        - $ref: '#/components/schemas/Space'
+        - type: object
+          properties:
+            favorited:
+              type: boolean
+            permissions:
+              type: object
+              properties:
+                canRead:
+                  type: boolean
+                canEdit:
+                  type: boolean
+                isOwner:
+                  type: boolean
+                isPublic:
+                  type: boolean
+            owner:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                profileImage:
+                  type: string
+
+    Memory:
+      type: object
+      properties:
+        id:
+          type: string
+        uuid:
+          type: string
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        url:
+          type: string
+          nullable: true
+        type:
+          type: string
+          enum: [page, note, tweet, document]
+        content:
+          type: string
+        ogImage:
+          type: string
+          nullable: true
+        raw:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        isSuccessfullyProcessed:
+          type: boolean
+        userId:
+          type: integer
+        contentHash:
+          type: string
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+
+    ChatThread:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ChatMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+
+    SpaceInvitation:
+      type: object
+      properties:
+        spaceAccess:
+          type: object
+          properties:
+            id:
+              type: integer
+            spaceId:
+              type: integer
+            userEmail:
+              type: string
+            accessType:
+              type: string
+              enum: [read, edit]
+            status:
+              type: string
+              enum: [pending, accepted, rejected]
+        spaceUuid:
+          type: string
+        spaceName:
+          type: string
+
+    PrefetchedContent:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        ogImage:
+          type: string
+        contentToSave:
+          type: string
+        contentToVectorize:
+          type: string
+
+    SearchResult:
+      type: object
+      properties:
+        document:
+          type: object
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+            url:
+              type: string
+            type:
+              type: string
+        similarity:
+          type: number
+          minimum: 0
+          maximum: 1
+        chunk:
+          type: string
+        chunkId:
+          type: string
+
+    SuggestedLearning:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Additional error details
+
+  responses:
+    Unauthorized:
+      description: Authentication required or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Unauthorized"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Health
+    description: API health and status endpoints
+  - name: User
+    description: User account management
+  - name: Spaces
+    description: Space creation and management
+  - name: Memories
+    description: Memory/content management
+  - name: Content
+    description: Content addition and processing
+  - name: AI & Search
+    description: AI-powered search and chat features
+  - name: Integrations
+    description: Third-party integrations

@@ -1,0 +1,539 @@
+---
+title: 'MCP Server Introduction'
+description: 'Use SuperMemory with Claude Desktop and other MCP clients'
+---
+
+## What is MCP?
+
+The Model Context Protocol (MCP) is an open standard that enables AI assistants to securely connect with data sources and tools. SuperMemory's MCP server allows you to use your saved knowledge directly within Claude Desktop and other MCP-compatible clients.
+
+<Info>
+MCP (Model Context Protocol) was created by Anthropic to standardize how AI assistants access external data and tools securely.
+</Info>
+
+## Features
+
+With SuperMemory's MCP server, you can:
+
+<CardGroup cols={2}>
+  <Card
+    title="Search Your Knowledge"
+    icon="magnifying-glass"
+  >
+    Find relevant memories directly from Claude Desktop
+  </Card>
+  <Card
+    title="Add New Memories"
+    icon="plus"
+  >
+    Save new content to SuperMemory from your conversations
+  </Card>
+  <Card
+    title="Browse Spaces"
+    icon="folder"
+  >
+    Explore your organized knowledge spaces
+  </Card>
+  <Card
+    title="Secure Access"
+    icon="shield-check"
+  >
+    All data access is authenticated and secure
+  </Card>
+</CardGroup>
+
+## Supported MCP Clients
+
+<Tabs>
+  <Tab title="Claude Desktop">
+    The primary supported client with full feature integration
+  </Tab>
+  <Tab title="Other MCP Clients">
+    Any MCP-compatible client should work with basic functionality
+  </Tab>
+</Tabs>
+
+## Quick Start
+
+<Steps>
+  <Step title="Install the MCP Server">
+    ```bash
+    npm install -g @supermemory/mcp-server
+    ```
+  </Step>
+  <Step title="Get Your API Key">
+    Generate an API key from your [SuperMemory dashboard](https://supermemory.ai/settings/integrations)
+  </Step>
+  <Step title="Configure Claude Desktop">
+    Add the server configuration to your Claude Desktop settings
+  </Step>
+  <Step title="Start Using">
+    Ask Claude to search your SuperMemory knowledge!
+  </Step>
+</Steps>
+
+## Installation
+
+### Prerequisites
+
+- Node.js 18 or higher
+- A SuperMemory account with API access
+- Claude Desktop (or another MCP client)
+
+### Install via npm
+
+```bash
+npm install -g @supermemory/mcp-server
+```
+
+### Install from Source
+
+```bash
+git clone https://github.com/DeNIRMAL/memory2.git
+cd memory2/packages/mcp-server
+npm install
+npm run build
+npm link
+```
+
+## Configuration
+
+### Claude Desktop Setup
+
+Add SuperMemory to your Claude Desktop configuration:
+
+<Tabs>
+  <Tab title="macOS">
+    Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+    ```json
+    {
+      "mcpServers": {
+        "supermemory": {
+          "command": "supermemory-mcp-server",
+          "env": {
+            "SUPERMEMORY_API_KEY": "your_api_key_here"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Windows">
+    Edit `%APPDATA%\Claude\claude_desktop_config.json`:
+    ```json
+    {
+      "mcpServers": {
+        "supermemory": {
+          "command": "supermemory-mcp-server",
+          "env": {
+            "SUPERMEMORY_API_KEY": "your_api_key_here"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Linux">
+    Edit `~/.config/Claude/claude_desktop_config.json`:
+    ```json
+    {
+      "mcpServers": {
+        "supermemory": {
+          "command": "supermemory-mcp-server",
+          "env": {
+            "SUPERMEMORY_API_KEY": "your_api_key_here"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Advanced Configuration
+
+You can customize the MCP server behavior:
+
+```json
+{
+  "mcpServers": {
+    "supermemory": {
+      "command": "supermemory-mcp-server",
+      "env": {
+        "SUPERMEMORY_API_KEY": "your_api_key_here",
+        "SUPERMEMORY_BASE_URL": "https://api.vevibe.com",
+        "SUPERMEMORY_DEFAULT_SPACE": "your-default-space-uuid",
+        "SUPERMEMORY_SEARCH_LIMIT": "20",
+        "SUPERMEMORY_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SUPERMEMORY_API_KEY` | Your API key (required) | - |
+| `SUPERMEMORY_BASE_URL` | API base URL | `https://api.vevibe.com` |
+| `SUPERMEMORY_DEFAULT_SPACE` | Default space for new memories | User's first space |
+| `SUPERMEMORY_SEARCH_LIMIT` | Default search result limit | `10` |
+| `SUPERMEMORY_LOG_LEVEL` | Logging level | `warn` |
+
+## Using with Claude Desktop
+
+Once configured, restart Claude Desktop and you'll have access to SuperMemory functions:
+
+### Search Your Knowledge
+
+```
+Hey Claude, can you search my SuperMemory for information about machine learning?
+```
+
+Claude will use the search function to find relevant memories and provide you with summaries and insights.
+
+### Add New Content
+
+```
+Claude, can you save this article about React best practices to my SuperMemory?
+[Include URL or content]
+```
+
+Claude can add new memories to your knowledge base during conversations.
+
+### Browse Spaces
+
+```
+What spaces do I have in SuperMemory, and what's in my 'Work' space?
+```
+
+Claude can list your spaces and explore their contents.
+
+## Available MCP Tools
+
+The SuperMemory MCP server provides these tools to Claude:
+
+### search_memories
+
+Search across your saved memories using semantic search.
+
+**Parameters:**
+- `query` (string): Search query
+- `limit` (number, optional): Number of results (default: 10)
+- `spaces` (array, optional): Space UUIDs to search within
+
+**Example:**
+```
+search_memories({
+  "query": "React hooks best practices",
+  "limit": 5,
+  "spaces": ["work-space-uuid"]
+})
+```
+
+### add_memory
+
+Add new content to SuperMemory.
+
+**Parameters:**
+- `type` (string): Content type ("page", "note", "document", "tweet")
+- `content` (string): URL or text content
+- `spaces` (array, optional): Space UUIDs to add to
+- `title` (string, optional): Custom title
+
+**Example:**
+```
+add_memory({
+  "type": "note",
+  "content": "Remember to review the quarterly reports",
+  "spaces": ["work-space-uuid"],
+  "title": "Q4 Review Reminder"
+})
+```
+
+### list_spaces
+
+Get all available spaces and their details.
+
+**Parameters:**
+None
+
+**Example:**
+```
+list_spaces()
+```
+
+### get_space_contents
+
+Get memories within a specific space.
+
+**Parameters:**
+- `space_id` (string): Space UUID
+- `limit` (number, optional): Number of memories to return
+
+**Example:**
+```
+get_space_contents({
+  "space_id": "work-space-uuid",
+  "limit": 20
+})
+```
+
+### get_user_info
+
+Get current user information and account details.
+
+**Parameters:**
+None
+
+**Example:**
+```
+get_user_info()
+```
+
+## Usage Examples
+
+### Research Assistant
+
+```
+Claude: I'd like to research machine learning papers I've saved.
+
+You: Can you search my SuperMemory for machine learning papers and summarize the key trends?
+
+Claude: I'll search your SuperMemory for machine learning content...
+
+[Uses search_memories tool]
+
+Based on your saved content, I found 15 papers about machine learning. Here are the key trends:
+
+1. **Transformer Architecture Evolution**: Your saved papers show a clear progression from basic attention mechanisms to advanced transformer variants...
+
+2. **Multimodal AI**: Several papers discuss combining vision and language models...
+
+[Provides detailed analysis based on your saved content]
+```
+
+### Knowledge Curation
+
+```
+You: I just read a great article about sustainable energy. Can you save it to my "Research" space?
+
+Article: https://example.com/sustainable-energy-breakthrough
+
+Claude: I'll save that article to your SuperMemory Research space.
+
+[Uses add_memory tool]
+
+I've successfully saved the article "Sustainable Energy Breakthrough" to your Research space. The article discusses new battery technology and renewable energy integration strategies. Would you like me to search for related content you've already saved?
+```
+
+### Project Organization
+
+```
+You: What content do I have in my "AI Project" space?
+
+Claude: Let me check what's in your AI Project space...
+
+[Uses get_space_contents tool]
+
+Your AI Project space contains 23 memories:
+
+**Papers & Articles (15):**
+- "Attention Is All You Need" - Transformer architecture fundamentals
+- "BERT: Pre-training Bidirectional Transformers" - Language model paper
+- "GPT-3: Language Models are Few-Shot Learners"
+[continues listing]
+
+**Notes (5):**
+- "Project roadmap Q4 2024"
+- "Meeting notes: AI ethics discussion"
+[continues listing]
+
+**Documents (3):**
+- "AI_Project_Proposal.pdf"
+- "Technical_Requirements.docx"
+[continues listing]
+
+Would you like me to search for specific topics within this space or help organize the content?
+```
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="MCP Server Not Connecting">
+    **Symptoms:** Claude Desktop doesn't show SuperMemory tools
+    
+    **Solutions:**
+    - Verify your API key is correct
+    - Check that the MCP server is installed globally
+    - Restart Claude Desktop after configuration changes
+    - Check Claude Desktop logs for error messages
+  </Accordion>
+
+  <Accordion title="API Key Authentication Errors">
+    **Symptoms:** "Unauthorized" or "Invalid API key" errors
+    
+    **Solutions:**
+    - Generate a new API key from SuperMemory dashboard
+    - Ensure the API key is properly set in the environment
+    - Check that your account has API access enabled
+  </Accordion>
+
+  <Accordion title="Search Results Empty">
+    **Symptoms:** Search returns no results despite having content
+    
+    **Solutions:**
+    - Verify content has finished processing in SuperMemory
+    - Try broader search terms
+    - Check if you're searching in the correct spaces
+    - Ensure your account has content in SuperMemory
+  </Accordion>
+
+  <Accordion title="Performance Issues">
+    **Symptoms:** Slow responses or timeouts
+    
+    **Solutions:**
+    - Reduce search limits in configuration
+    - Check your internet connection
+    - Verify SuperMemory API status
+    - Try restarting the MCP server
+  </Accordion>
+</AccordionGroup>
+
+### Debug Mode
+
+Enable debug logging to troubleshoot issues:
+
+```json
+{
+  "mcpServers": {
+    "supermemory": {
+      "command": "supermemory-mcp-server",
+      "env": {
+        "SUPERMEMORY_API_KEY": "your_api_key_here",
+        "SUPERMEMORY_LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
+```
+
+Check logs in Claude Desktop's console or system logs.
+
+### Manual Testing
+
+Test the MCP server directly:
+
+```bash
+# Install MCP client tools
+npm install -g @modelcontextprotocol/cli
+
+# Test the server
+mcp-client supermemory-mcp-server
+```
+
+## Advanced Usage
+
+### Custom MCP Client
+
+Build your own MCP client that uses SuperMemory:
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+
+async function createSuperMemoryClient() {
+  const transport = new StdioClientTransport({
+    command: 'supermemory-mcp-server',
+    env: {
+      SUPERMEMORY_API_KEY: 'your_api_key_here'
+    }
+  });
+
+  const client = new Client({
+    name: 'my-supermemory-client',
+    version: '1.0.0',
+  }, {
+    capabilities: {}
+  });
+
+  await client.connect(transport);
+  return client;
+}
+
+// Use the client
+const client = await createSuperMemoryClient();
+
+// Search memories
+const searchResult = await client.callTool({
+  name: 'search_memories',
+  arguments: {
+    query: 'machine learning',
+    limit: 5
+  }
+});
+
+console.log(searchResult);
+```
+
+### Integration with Other Tools
+
+Combine SuperMemory with other MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "supermemory": {
+      "command": "supermemory-mcp-server",
+      "env": {
+        "SUPERMEMORY_API_KEY": "your_api_key"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/path/to/files"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "your_brave_api_key"
+      }
+    }
+  }
+}
+```
+
+This allows Claude to:
+- Search the web with Brave
+- Access local files
+- Search your SuperMemory knowledge
+- Cross-reference information from all sources
+
+## API Reference
+
+For detailed MCP server documentation:
+
+<CardGroup cols={2}>
+  <Card
+    title="MCP Installation"
+    href="/mcp/installation"
+    icon="download"
+  >
+    Detailed installation instructions
+  </Card>
+  <Card
+    title="MCP Configuration"
+    href="/mcp/configuration"
+    icon="cog"
+  >
+    Advanced configuration options
+  </Card>
+</CardGroup>
+
+---
+
+The SuperMemory MCP server bridges your knowledge base with AI assistants, making your saved information instantly accessible and actionable within your AI conversations.

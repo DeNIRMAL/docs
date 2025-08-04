@@ -1,80 +1,193 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: 'Quickstart'
+description: 'Get started with SuperMemory in under 5 minutes'
 ---
 
-## Get started in three steps
+## Welcome to SuperMemory
 
-Get your documentation site running locally and make your first customization.
+This quickstart guide will help you set up SuperMemory and add your first memories in just a few minutes.
 
-### Step 1: Set up your local environment
+## Step 1: Create Your Account
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+<Steps>
+  <Step title="Sign Up">
+    Visit [supermemory.ai](https://supermemory.ai) and create your free account
+  </Step>
+  <Step title="Verify Email">
+    Check your email and verify your account
+  </Step>
+  <Step title="Complete Setup">
+    Follow the onboarding flow to set up your profile
+  </Step>
+</Steps>
 
-### Step 2: Deploy your changes
+## Step 2: Install Browser Extension
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+The browser extension makes saving content effortless:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+<Tabs>
+  <Tab title="Chrome">
+    1. Visit the [Chrome Web Store](https://chrome.google.com/webstore)
+    2. Search for "SuperMemory"
+    3. Click "Add to Chrome"
+    4. Sign in with your SuperMemory account
+  </Tab>
+  <Tab title="Firefox">
+    1. Visit [Firefox Add-ons](https://addons.mozilla.org)
+    2. Search for "SuperMemory"
+    3. Click "Add to Firefox"
+    4. Sign in with your SuperMemory account
+  </Tab>
+  <Tab title="Safari">
+    1. Download from the App Store
+    2. Enable in Safari Extensions
+    3. Sign in with your SuperMemory account
+  </Tab>
+</Tabs>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Step 3: Add Your First Memory
 
-### Step 3: Go live
+Let's add some content to SuperMemory:
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+### Method 1: Browser Extension
+1. Navigate to any webpage
+2. Click the SuperMemory extension icon
+3. Choose a space (or create a new one)
+4. Click "Save"
 
-## Next steps
+### Method 2: Web Dashboard
+1. Go to your [SuperMemory dashboard](https://supermemory.ai/dashboard)
+2. Click the "+" button
+3. Paste a URL or type/paste text content
+4. Select the content type and space
+5. Click "Add Memory"
 
-Now that you have your docs running, explore these key features:
+### Method 3: API
+```bash
+curl -X POST https://api.vevibe.com/v1/add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "page",
+    "content": "https://example.com/article",
+    "spaces": ["your-space-id"]
+  }'
+```
+
+## Step 4: Create Your First Space
+
+Spaces help organize your knowledge:
+
+<Steps>
+  <Step title="Navigate to Spaces">
+    Go to the Spaces section in your dashboard
+  </Step>
+  <Step title="Create New Space">
+    Click "Create Space" and give it a name like "Learning" or "Work"
+  </Step>
+  <Step title="Set Permissions">
+    Choose if it's private or if you want to invite collaborators
+  </Step>
+  <Step title="Add Content">
+    Start adding memories to your new space
+  </Step>
+</Steps>
+
+## Step 5: Try AI Search and Chat
+
+Now that you have some content, let's explore SuperMemory's AI features:
+
+### Search Your Memories
+1. Use the search bar in your dashboard
+2. Try natural language queries like:
+   - "articles about machine learning"
+   - "notes from last week's meeting"
+   - "research on climate change"
+
+### Chat with Your Knowledge
+1. Click on the Chat feature
+2. Ask questions about your saved content:
+   - "What did I save about productivity?"
+   - "Summarize my research on AI"
+   - "Find connections between my saved articles"
+
+## Step 6: Set Up Integrations (Optional)
+
+Connect SuperMemory with your favorite tools:
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card
+    title="Twitter Integration"
+    icon="twitter"
+    href="/essentials/integrations#twitter"
+  >
+    Automatically save your liked tweets and bookmarks
+  </Card>
+  <Card
+    title="Notion Import"
+    icon="notion"
+    href="/essentials/integrations#notion"
+  >
+    Import your existing Notion pages
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## API Access
+
+For developers who want to integrate SuperMemory:
+
+<Steps>
+  <Step title="Generate API Key">
+    Go to Settings → Integrations → Generate API Key
+  </Step>
+  <Step title="Test Your Connection">
+    ```bash
+    curl -H "Authorization: Bearer YOUR_API_KEY" \
+         https://api.vevibe.com/v1/user
+    ```
+  </Step>
+  <Step title="Explore the API">
+    Check out our [API documentation](/api-reference/introduction) for all available endpoints
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Explore Spaces"
+    icon="folder"
+    href="/essentials/spaces"
+  >
+    Learn advanced space management and collaboration
+  </Card>
+  <Card
+    title="Master AI Features"
+    icon="brain"
+    href="/essentials/ai-chat"
+  >
+    Discover powerful AI search and chat capabilities
+  </Card>
+  <Card
+    title="API Integration"
+    icon="code"
+    href="/api-reference/introduction"
+  >
+    Build applications with SuperMemory API
+  </Card>
+  <Card
+    title="Self-Hosting"
+    icon="server"
+    href="/self-hosting"
+  >
+    Deploy SuperMemory on your own infrastructure
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+<Warning>
+If you encounter any issues during setup, check out our [troubleshooting guide](/essentials/troubleshooting) or reach out on [Discord](https://discord.gg/supermemory).
+</Warning>
+
+Congratulations! You're now ready to start building your second brain with SuperMemory. Happy learning! 🧠✨

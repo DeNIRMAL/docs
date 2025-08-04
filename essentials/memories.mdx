@@ -1,0 +1,398 @@
+---
+title: 'Memories'
+description: 'Understand and manage your saved content with SuperMemory'
+---
+
+## What are Memories?
+
+Memories are the core content units in SuperMemory. Every piece of information you save—whether it's a web page, document, note, or tweet—becomes a memory that's intelligently processed, indexed, and made searchable by our AI system.
+
+## Types of Memories
+
+SuperMemory supports various content types, each optimized for its specific format:
+
+<CardGroup cols={2}>
+  <Card
+    title="Web Pages"
+    icon="globe"
+  >
+    Automatically extracts content, metadata, and key information from any URL
+  </Card>
+  <Card
+    title="Documents"
+    icon="file-text"
+  >
+    Supports PDFs, Word docs, and other document formats with full-text extraction
+  </Card>
+  <Card
+    title="Notes"
+    icon="sticky-note"
+  >
+    Raw text content, perfect for quick thoughts and ideas
+  </Card>
+  <Card
+    title="Tweets"
+    icon="twitter"
+  >
+    Special handling for Twitter content including thread reconstruction
+  </Card>
+</CardGroup>
+
+## Memory Lifecycle
+
+Understanding how memories are processed helps you work more effectively with SuperMemory:
+
+### 1. Ingestion
+When you add content, SuperMemory immediately:
+- Creates a memory record
+- Assigns a unique UUID
+- Begins content processing
+
+### 2. Processing
+Our AI workflow:
+- Extracts text from various formats
+- Generates metadata (title, description, tags)
+- Creates vector embeddings for semantic search
+- Extracts key entities and topics
+
+### 3. Indexing
+Processed memories are:
+- Added to the search index
+- Made available for AI chat
+- Connected to related content
+- Organized within specified spaces
+
+### 4. Enhancement
+Over time, memories are enhanced with:
+- Usage analytics
+- Relationship mapping
+- Quality improvements
+- Updated metadata
+
+## Adding Memories
+
+### Browser Extension
+The fastest way to save content:
+
+<Steps>
+  <Step title="Install Extension">
+    Add the SuperMemory browser extension for your browser
+  </Step>
+  <Step title="Navigate to Content">
+    Go to any webpage you want to save
+  </Step>
+  <Step title="Click Extension">
+    Click the SuperMemory icon in your browser toolbar
+  </Step>
+  <Step title="Configure & Save">
+    Choose spaces, add tags, and click save
+  </Step>
+</Steps>
+
+### Web Dashboard
+Manual addition through the interface:
+
+1. Click the "+" button in your dashboard
+2. Choose content type (URL, text, file upload)
+3. Enter or paste your content
+4. Select target spaces
+5. Add custom tags or notes
+6. Click "Add Memory"
+
+### API Integration
+Programmatic content addition:
+
+```bash
+# Add a web page
+curl -X POST https://api.vevibe.com/v1/add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "page",
+    "content": "https://example.com/article",
+    "spaces": ["space-uuid"]
+  }'
+
+# Add a note
+curl -X POST https://api.vevibe.com/v1/add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "note",
+    "content": "Important insight about AI development...",
+    "spaces": ["space-uuid"]
+  }'
+```
+
+### Bulk Import
+For large content collections:
+
+```bash
+curl -X POST https://api.vevibe.com/v1/bulk-add \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "urls": [
+      "https://example1.com",
+      "https://example2.com",
+      "https://example3.com"
+    ],
+    "spaces": ["space-uuid"]
+  }'
+```
+
+## Memory Properties
+
+Each memory contains rich metadata automatically extracted and generated:
+
+### Core Properties
+- **UUID**: Unique identifier
+- **Title**: Extracted or generated title
+- **Description**: AI-generated summary
+- **Content**: Full text content
+- **URL**: Original source URL (if applicable)
+- **Type**: Content type classification
+
+### Extracted Metadata
+- **Author**: Original author (when available)
+- **Publication Date**: When content was published
+- **Open Graph Image**: Preview image from web content
+- **Tags**: AI-generated and user-defined tags
+- **Language**: Detected content language
+
+### Processing Status
+- **Success Status**: Whether processing completed successfully
+- **Error Messages**: Any processing errors encountered
+- **Content Hash**: Deduplication identifier
+- **Processing Timestamp**: When content was last processed
+
+## Managing Memories
+
+### Viewing Memories
+
+<Tabs>
+  <Tab title="Dashboard View">
+    - Grid or list view options
+    - Filter by space, type, or date
+    - Search within memory content
+    - Sort by relevance, date, or title
+  </Tab>
+  <Tab title="Space View">
+    - See memories within specific spaces
+    - Filter by member contributions
+    - View space-specific analytics
+    - Bulk operations on space content
+  </Tab>
+  <Tab title="Search Results">
+    - Semantic search results
+    - Highlighted relevant passages
+    - Similarity scores
+    - Related content suggestions
+  </Tab>
+</Tabs>
+
+### Editing Memories
+
+While the core content is preserved, you can modify:
+
+- **Title**: Update for better organization
+- **Tags**: Add custom tags for improved discovery
+- **Spaces**: Move between spaces or add to additional spaces
+- **Notes**: Add personal annotations and insights
+
+### Deleting Memories
+
+<Warning>
+Deletion is permanent and cannot be undone. Consider moving to a private space instead of deleting.
+</Warning>
+
+#### Single Deletion
+```bash
+curl -X DELETE https://api.vevibe.com/v1/memories/{memoryId} \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Batch Deletion
+```bash
+curl -X POST https://api.vevibe.com/v1/memories/batch-delete \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ids": ["uuid1", "uuid2", "uuid3"]
+  }'
+```
+
+## Advanced Features
+
+### Memory Analytics
+
+Track how your memories are used:
+
+- **Access Frequency**: How often memories are viewed
+- **Search Appearances**: How often they appear in search results
+- **Chat References**: Usage in AI conversations
+- **Collaboration Metrics**: Team interaction with shared memories
+
+### Content Enhancement
+
+SuperMemory continuously improves your memories:
+
+<AccordionGroup>
+  <Accordion title="Automatic Reprocessing">
+    Memories are automatically reprocessed when our AI models improve, enhancing metadata and search quality.
+  </Accordion>
+
+  <Accordion title="Related Content Discovery">
+    AI identifies and suggests connections between your memories, helping you discover patterns and relationships.
+  </Accordion>
+
+  <Accordion title="Quality Scoring">
+    Each memory receives a quality score based on content richness, metadata completeness, and processing success.
+  </Accordion>
+
+  <Accordion title="Duplicate Detection">
+    Automatic detection and handling of duplicate content to keep your knowledge base clean.
+  </Accordion>
+</AccordionGroup>
+
+### Memory Relationships
+
+SuperMemory automatically identifies relationships between memories:
+
+- **Topical Similarity**: Memories about similar subjects
+- **Source Relationships**: Content from the same author or website
+- **Temporal Connections**: Content saved around the same time
+- **Reference Links**: When memories link to each other
+- **User Patterns**: Based on your interaction history
+
+## Memory Search and Discovery
+
+### Semantic Search
+Find memories using natural language:
+
+```bash
+curl -X POST https://api.vevibe.com/v1/search \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "machine learning best practices",
+    "limit": 10,
+    "threshold": 0.7
+  }'
+```
+
+### Advanced Filters
+Narrow down results with:
+
+- **Date Ranges**: Find content from specific time periods
+- **Content Types**: Filter by page, note, document, or tweet
+- **Spaces**: Search within specific spaces
+- **Tags**: Filter by user or AI-generated tags
+- **Processing Status**: Find memories that need attention
+
+### Search Tips
+
+<CardGroup cols={2}>
+  <Card
+    title="Use Natural Language"
+    icon="comments"
+  >
+    Ask questions as you would to a person: "What did I save about productivity?"
+  </Card>
+  <Card
+    title="Combine Keywords"
+    icon="tags"
+  >
+    Mix specific terms with broader concepts for better results
+  </Card>
+  <Card
+    title="Time-based Queries"
+    icon="clock"
+  >
+    Include temporal context: "recent articles about AI"
+  </Card>
+  <Card
+    title="Context Matters"
+    icon="brain"
+  >
+    The AI understands context and relationships between concepts
+  </Card>
+</CardGroup>
+
+## Troubleshooting Memory Issues
+
+### Processing Failures
+
+When memories fail to process:
+
+<Steps>
+  <Step title="Check Error Message">
+    Look for specific error details in the memory's metadata
+  </Step>
+  <Step title="Verify Content Access">
+    Ensure URLs are accessible and content isn't behind paywalls
+  </Step>
+  <Step title="Retry Processing">
+    Use the reprocess endpoint to try again
+  </Step>
+  <Step title="Manual Intervention">
+    For persistent issues, manually extract and add content
+  </Step>
+</Steps>
+
+```bash
+# Reprocess memories with missing metadata
+curl -X POST https://api.vevibe.com/v1/reprocess-missing-metadata \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Memory not appearing in search">
+    - Check if processing completed successfully
+    - Verify the memory is in the space you're searching
+    - Try different search terms or broader queries
+  </Accordion>
+
+  <Accordion title="Duplicate memories created">
+    - Slight URL variations can create duplicates
+    - Use content hash matching to identify true duplicates
+    - Consider consolidating related but distinct content
+  </Accordion>
+
+  <Accordion title="Missing metadata">
+    - Some content sources have limited metadata
+    - Manual enhancement may be needed for rich descriptions
+    - AI can generate metadata from content analysis
+  </Accordion>
+
+  <Accordion title="Slow processing">
+    - Large documents take more time to process
+    - Complex web pages may require multiple extraction attempts
+    - Check system status for any processing delays
+  </Accordion>
+</AccordionGroup>
+
+## API Reference
+
+For complete memory management APIs:
+
+<CardGroup cols={2}>
+  <Card
+    title="Memory Management"
+    href="/api-reference/memories/list-memories"
+  >
+    List, retrieve, and manage your memories
+  </Card>
+  <Card
+    title="Content Addition"
+    href="/api-reference/content/add-memory"
+  >
+    Add new content and bulk operations
+  </Card>
+</CardGroup>
+
+---
+
+Memories are the building blocks of your knowledge in SuperMemory. By understanding how they work and how to manage them effectively, you'll create a powerful, searchable repository of everything you want to remember and access later.

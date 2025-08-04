@@ -1,0 +1,444 @@
+---
+title: 'Integrations'
+description: 'Connect SuperMemory with your favorite tools and platforms'
+---
+
+## Overview
+
+SuperMemory integrates seamlessly with the tools you already use, automatically capturing knowledge from various sources and making it searchable and conversational. Our integrations help you build a comprehensive knowledge base without changing your existing workflow.
+
+## Available Integrations
+
+<CardGroup cols={2}>
+  <Card
+    title="Twitter / X"
+    icon="twitter"
+    href="#twitter-integration"
+  >
+    Automatically save liked tweets, bookmarks, and threads
+  </Card>
+  <Card
+    title="Notion"
+    icon="notion"
+    href="#notion-integration"
+  >
+    Import existing Notion pages and databases
+  </Card>
+  <Card
+    title="Browser Extension"
+    icon="chrome"
+    href="#browser-extension"
+  >
+    Save any webpage with one click
+  </Card>
+  <Card
+    title="Slack (Coming Soon)"
+    icon="slack"
+    href="#slack-integration"
+  >
+    Save important messages and search across channels
+  </Card>
+</CardGroup>
+
+## Twitter Integration
+
+### Features
+- **Automatic Bookmark Sync**: Import all your Twitter bookmarks
+- **Liked Tweet Capture**: Save tweets you've liked for later reference
+- **Thread Reconstruction**: Automatically piece together Twitter threads
+- **Real-time Sync**: New likes and bookmarks are automatically saved
+- **Metadata Extraction**: Capture author, engagement metrics, and context
+
+### Setup Process
+
+<Steps>
+  <Step title="Connect Your Account">
+    Go to Settings → Integrations → Twitter and click "Connect Account"
+  </Step>
+  <Step title="Authorize Access">
+    Log in to Twitter and authorize SuperMemory to access your bookmarks and likes
+  </Step>
+  <Step title="Configure Settings">
+    Choose which content to sync and how often
+  </Step>
+  <Step title="Select Target Space">
+    Pick which space to save Twitter content to
+  </Step>
+</Steps>
+
+### Configuration Options
+
+<Tabs>
+  <Tab title="Content Types">
+    - **Bookmarks**: Import all existing and new bookmarks
+    - **Liked Tweets**: Save tweets you like to SuperMemory
+    - **Your Tweets**: Backup your own tweets and threads
+    - **Mentions**: Save tweets where you're mentioned
+  </Tab>
+  <Tab title="Sync Settings">
+    - **Frequency**: Real-time, hourly, or daily sync
+    - **Batch Size**: How many tweets to process at once
+    - **Filtering**: Keywords or hashtags to include/exclude
+    - **Date Range**: Import tweets from specific time periods
+  </Tab>
+  <Tab title="Organization">
+    - **Default Space**: Where to save Twitter content
+    - **Auto-tagging**: Automatically tag with #twitter, hashtags
+    - **Thread Handling**: How to organize tweet threads
+    - **Duplicate Prevention**: Avoid saving the same tweet multiple times
+  </Tab>
+</Tabs>
+
+### Twitter API Usage
+
+For advanced users with Twitter API access:
+
+```bash
+# Manually trigger Twitter sync
+curl -X POST https://api.vevibe.com/v1/integrations/twitter/sync \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "bookmarks",
+    "limit": 100
+  }'
+```
+
+## Notion Integration
+
+### Features
+- **Bulk Page Import**: Import entire Notion workspaces
+- **Database Sync**: Import Notion databases with metadata
+- **Rich Content Preservation**: Maintain formatting, images, and structure
+- **Incremental Updates**: Sync only changed pages
+- **Permission Mapping**: Respect Notion sharing permissions
+
+### Import Process
+
+<Steps>
+  <Step title="Authorize Notion">
+    Visit the Notion integration page and connect your Notion account
+  </Step>
+  <Step title="Select Content">
+    Choose which pages, databases, or entire workspaces to import
+  </Step>
+  <Step title="Map to Spaces">
+    Decide how Notion content maps to SuperMemory spaces
+  </Step>
+  <Step title="Configure Processing">
+    Set options for how content should be processed and organized
+  </Step>
+  <Step title="Start Import">
+    Begin the import process and monitor progress
+  </Step>
+</Steps>
+
+### Import Options
+
+<AccordionGroup>
+  <Accordion title="Content Selection">
+    - **Workspace Import**: Import entire Notion workspace
+    - **Selective Pages**: Choose specific pages and databases
+    - **Public Only**: Import only publicly shared content
+    - **Date Filtered**: Import content modified after a specific date
+  </Accordion>
+
+  <Accordion title="Processing Options">
+    - **Preserve Formatting**: Maintain Notion's rich text formatting
+    - **Extract Images**: Download and store images locally
+    - **Convert Tables**: Transform Notion tables into searchable content
+    - **Link Resolution**: Resolve internal Notion links
+  </Accordion>
+
+  <Accordion title="Organization">
+    - **Space Mapping**: Map Notion workspaces to SuperMemory spaces
+    - **Tag Generation**: Auto-generate tags from Notion properties
+    - **Hierarchy Preservation**: Maintain page hierarchies
+    - **Database Handling**: How to process Notion databases
+  </Accordion>
+</AccordionGroup>
+
+### API Import
+
+```bash
+# Trigger Notion import
+curl -X GET https://api.vevibe.com/v1/integrations/notion/import \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Troubleshooting Notion Import
+
+<Warning>
+Large Notion workspaces may take several hours to import. You'll receive email notifications when the import is complete.
+</Warning>
+
+Common issues:
+- **Permission Errors**: Ensure SuperMemory has access to the content you want to import
+- **Rate Limiting**: Large imports may be throttled to respect Notion's API limits
+- **Formatting Issues**: Some complex Notion formatting may not transfer perfectly
+- **Missing Images**: Images in private Notion pages may not be accessible
+
+## Browser Extension
+
+### Supported Browsers
+- Chrome/Chromium
+- Firefox
+- Safari
+- Edge
+
+### Installation
+
+<Tabs>
+  <Tab title="Chrome">
+    1. Visit the [Chrome Web Store](https://chrome.google.com/webstore)
+    2. Search for "SuperMemory"
+    3. Click "Add to Chrome"
+    4. Pin the extension to your toolbar
+    5. Sign in with your SuperMemory account
+  </Tab>
+  <Tab title="Firefox">
+    1. Go to [Firefox Add-ons](https://addons.mozilla.org)
+    2. Search for "SuperMemory"
+    3. Click "Add to Firefox"
+    4. Grant necessary permissions
+    5. Sign in with your SuperMemory account
+  </Tab>
+  <Tab title="Safari">
+    1. Download from the Mac App Store
+    2. Enable in Safari → Preferences → Extensions
+    3. Click the SuperMemory icon
+    4. Sign in with your SuperMemory account
+  </Tab>
+</Tabs>
+
+### Extension Features
+
+<CardGroup cols={2}>
+  <Card
+    title="One-Click Save"
+    icon="mouse-pointer"
+  >
+    Save any webpage instantly with a single click
+  </Card>
+  <Card
+    title="Smart Selection"
+    icon="hand-pointer"
+  >
+    Save selected text or specific page sections
+  </Card>
+  <Card
+    title="Space Selection"
+    icon="folder"
+  >
+    Choose which space to save content to
+  </Card>
+  <Card
+    title="Auto-tagging"
+    icon="tags"
+  >
+    Automatically generate relevant tags
+  </Card>
+</CardGroup>
+
+### Using the Extension
+
+1. **Navigate to Content**: Go to any webpage you want to save
+2. **Click Extension Icon**: Click the SuperMemory icon in your browser toolbar
+3. **Preview Content**: Review the extracted title, description, and content
+4. **Select Space**: Choose which space to save the content to
+5. **Add Tags**: Add custom tags if desired
+6. **Save**: Click save to add to your SuperMemory
+
+### Extension Settings
+
+Access settings by right-clicking the extension icon:
+
+- **Default Space**: Set a default space for new content
+- **Auto-save Mode**: Automatically save without preview
+- **Hotkeys**: Set keyboard shortcuts for quick saving
+- **Content Types**: Configure what types of content to capture
+- **Privacy Settings**: Control what domains can be saved
+
+## Slack Integration (Coming Soon)
+
+### Planned Features
+- **Message Archiving**: Save important Slack messages
+- **Channel Search**: Search across all your Slack channels from SuperMemory
+- **Thread Preservation**: Keep entire conversation threads together
+- **File Integration**: Include shared files and documents
+- **Team Knowledge**: Share saved Slack content with team spaces
+
+### Bot Commands (Preview)
+```
+/supermemory save - Save current message thread
+/supermemory search [query] - Search your SuperMemory from Slack
+/supermemory recent - Show recently saved content
+/supermemory spaces - List your spaces
+```
+
+## API Integrations
+
+### Webhook Support
+Set up webhooks to automatically sync content from custom sources:
+
+```bash
+# Configure webhook endpoint
+curl -X POST https://api.vevibe.com/v1/integrations/webhooks \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-webhook-endpoint.com",
+    "events": ["content.created", "content.updated"],
+    "secret": "your-webhook-secret"
+  }'
+```
+
+### Custom Integrations
+Build your own integrations using our API:
+
+```javascript
+// Example: RSS feed integration
+const rssParser = require('rss-parser');
+const parser = new rssParser();
+
+async function syncRSSFeed(feedUrl) {
+  const feed = await parser.parseURL(feedUrl);
+  
+  for (const item of feed.items) {
+    await fetch('https://api.vevibe.com/v1/add', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'page',
+        content: item.link,
+        spaces: ['rss-feed-space-id'],
+        prefetched: {
+          title: item.title,
+          description: item.contentSnippet,
+          contentToSave: item.content,
+        },
+      }),
+    });
+  }
+}
+```
+
+## Integration Management
+
+### Dashboard Overview
+Monitor all your integrations from the Settings → Integrations page:
+
+- **Connection Status**: See which integrations are active
+- **Sync Statistics**: View how much content has been imported
+- **Error Logs**: Troubleshoot any sync issues
+- **Usage Metrics**: Monitor API usage and rate limits
+
+### Managing Sync Frequency
+
+<Tabs>
+  <Tab title="Real-time">
+    - Immediate sync for supported platforms
+    - Uses webhooks when available
+    - Best for active content creation
+  </Tab>
+  <Tab title="Scheduled">
+    - Hourly, daily, or weekly sync
+    - More efficient for large content volumes
+    - Configurable time windows
+  </Tab>
+  <Tab title="Manual">
+    - On-demand sync only
+    - Full control over when content is imported
+    - Good for occasional content creators
+  </Tab>
+</Tabs>
+
+### Data Management
+
+<AccordionGroup>
+  <Accordion title="Duplicate Prevention">
+    SuperMemory automatically detects and prevents duplicate content across all integrations using content hashing and URL matching.
+  </Accordion>
+
+  <Accordion title="Bulk Operations">
+    Manage imported content in bulk - delete, move between spaces, or re-tag large numbers of memories at once.
+  </Accordion>
+
+  <Accordion title="Integration History">
+    View complete history of all integration activity, including successful imports and any errors.
+  </Accordion>
+
+  <Accordion title="Selective Sync">
+    Fine-tune what content gets imported with keyword filters, date ranges, and content type restrictions.
+  </Accordion>
+</AccordionGroup>
+
+## Security and Privacy
+
+### Authentication
+All integrations use secure OAuth flows:
+- **No Password Storage**: We never store your platform passwords
+- **Limited Permissions**: Only request necessary permissions
+- **Revocable Access**: Disconnect integrations anytime
+- **Encrypted Transit**: All data transfer is encrypted
+
+### Data Handling
+- **Source Attribution**: Original source and author information is preserved
+- **Permission Respect**: Private content remains private
+- **Local Processing**: Content analysis happens in secure environments
+- **Retention Control**: You control how long integrated content is stored
+
+## Troubleshooting Integrations
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Integration disconnected">
+    - Check if you've changed passwords on the source platform
+    - Re-authorize the integration in SuperMemory settings
+    - Verify the source platform hasn't revoked access
+  </Accordion>
+
+  <Accordion title="Content not syncing">
+    - Check integration sync settings and frequency
+    - Verify you have new content to sync on the source platform
+    - Look for error messages in the integration logs
+  </Accordion>
+
+  <Accordion title="Missing content">
+    - Some content may be private or restricted
+    - Check date range settings for imports
+    - Verify content types are enabled in sync settings
+  </Accordion>
+
+  <Accordion title="Duplicate content">
+    - Our deduplication isn't perfect for heavily modified content
+    - Use bulk operations to clean up duplicates
+    - Adjust sync settings to prevent future duplicates
+  </Accordion>
+</AccordionGroup>
+
+## Requesting New Integrations
+
+We're always adding new integrations. To request a new platform:
+
+1. **Check our roadmap** on GitHub for planned integrations
+2. **Open an issue** with details about the platform and use case
+3. **Vote on existing requests** to help us prioritize
+4. **Consider API access** - platforms with APIs are easier to integrate
+
+Popular requested integrations:
+- Discord
+- Reddit
+- YouTube (video transcripts)
+- Pocket
+- Instapaper
+- Medium
+- GitHub
+
+---
+
+Integrations make SuperMemory a central hub for all your knowledge, automatically capturing information from the tools you use every day and making it searchable and conversational.

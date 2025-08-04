@@ -1,0 +1,683 @@
+---
+title: 'JavaScript/TypeScript SDK'
+description: 'Official JavaScript and TypeScript SDK for SuperMemory'
+---
+
+## Installation
+
+Install the SuperMemory SDK using your preferred package manager:
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @supermemory/sdk
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @supermemory/sdk
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add @supermemory/sdk
+    ```
+  </Tab>
+  <Tab title="bun">
+    ```bash
+    bun add @supermemory/sdk
+    ```
+  </Tab>
+</Tabs>
+
+## Quick Start
+
+Get started with the SuperMemory SDK in just a few lines:
+
+```typescript
+import { SuperMemory } from '@supermemory/sdk';
+
+const supermemory = new SuperMemory({
+  apiKey: 'your_api_key_here',
+  baseUrl: 'https://api.vevibe.com', // Optional, defaults to production
+});
+
+// Add a memory
+const memory = await supermemory.memories.create({
+  type: 'page',
+  content: 'https://example.com/article',
+  spaces: ['work-space-id']
+});
+
+// Search memories
+const results = await supermemory.search({
+  query: 'machine learning best practices',
+  limit: 10
+});
+
+// Chat with your knowledge
+const chatResponse = await supermemory.chat({
+  messages: [
+    { role: 'user', content: 'What have I learned about React hooks?' }
+  ]
+});
+```
+
+## Configuration
+
+### Environment Variables
+
+Set up your environment variables:
+
+```bash
+# .env
+SUPERMEMORY_API_KEY=your_api_key_here
+SUPERMEMORY_BASE_URL=https://api.vevibe.com  # Optional
+```
+
+### SDK Configuration Options
+
+```typescript
+interface SuperMemoryConfig {
+  apiKey: string;
+  baseUrl?: string;          // Default: 'https://api.vevibe.com'
+  timeout?: number;          // Default: 30000 (30 seconds)
+  retries?: number;          // Default: 3
+  retryDelay?: number;       // Default: 1000 (1 second)
+  userAgent?: string;        // Custom user agent
+}
+
+const supermemory = new SuperMemory({
+  apiKey: process.env.SUPERMEMORY_API_KEY!,
+  timeout: 60000,  // 60 seconds
+  retries: 5,
+  retryDelay: 2000,
+});
+```
+
+## User Management
+
+### Get User Information
+
+```typescript
+// Get current user
+const user = await supermemory.user.get();
+console.log(user);
+// {
+//   id: 123,
+//   uuid: "user-uuid",
+//   email: "user@example.com",
+//   firstName: "John",
+//   lastName: "Doe"
+// }
+
+// Get user's spaces
+const userSpaces = await supermemory.user.getSpaces();
+
+// Get chat history
+const history = await supermemory.user.getChatHistory();
+
+// Generate new API key
+const newKey = await supermemory.user.generateApiKey();
+```
+
+## Space Management
+
+### Creating and Managing Spaces
+
+```typescript
+// Create a new space
+const space = await supermemory.spaces.create({
+  spaceName: 'Research Project',
+  isPublic: false
+});
+
+// List all spaces
+const spaces = await supermemory.spaces.list();
+
+// Get specific space
+const spaceDetails = await supermemory.spaces.get('space-uuid');
+
+// Update space
+const updatedSpace = await supermemory.spaces.update('space-uuid', {
+  name: 'Updated Research Project'
+});
+
+// Delete space
+await supermemory.spaces.delete('space-uuid');
+
+// Favorite a space
+await supermemory.spaces.favorite('space-uuid');
+```
+
+### Space Collaboration
+
+```typescript
+// Invite user to space
+await supermemory.spaces.invite('space-uuid', {
+  email: 'colleague@example.com',
+  accessType: 'edit'
+});
+
+// Accept space invitation
+await supermemory.spaces.acceptInvitation('space-uuid');
+
+// Reject space invitation
+await supermemory.spaces.rejectInvitation('space-uuid');
+
+// Get pending invitations
+const invitations = await supermemory.user.getInvitations();
+```
+
+### Content Management in Spaces
+
+```typescript
+// Add content to space
+await supermemory.spaces.addContent({
+  spaceId: 'space-uuid',
+  documentId: 'memory-uuid'
+});
+
+// Move content between spaces
+await supermemory.spaces.moveContent({
+  spaceId: 'target-space-uuid',
+  documentId: 'memory-uuid'
+});
+```
+
+## Memory Management
+
+### Creating Memories
+
+```typescript
+// Add a web page
+const pageMemory = await supermemory.memories.create({
+  type: 'page',
+  content: 'https://example.com/article',
+  spaces: ['space-uuid']
+});
+
+// Add a note
+const noteMemory = await supermemory.memories.create({
+  type: 'note',
+  content: 'This is my personal note about productivity',
+  spaces: ['personal-space-uuid']
+});
+
+// Add content with prefetched metadata
+const memoryWithMetadata = await supermemory.memories.create({
+  type: 'page',
+  content: 'https://example.com/article',
+  url: 'https://example.com/article',
+  spaces: ['space-uuid'],
+  prefetched: {
+    title: 'Article Title',
+    description: 'Article description',
+    ogImage: 'https://example.com/image.jpg',
+    contentToSave: 'Full article content...',
+    contentToVectorize: 'Processed content for search...'
+  }
+});
+```
+
+### Bulk Operations
+
+```typescript
+// Bulk add URLs
+const bulkResponse = await supermemory.memories.bulkAdd({
+  urls: [
+    'https://example1.com',
+    'https://example2.com',
+    'https://example3.com'
+  ],
+  spaces: ['space-uuid']
+});
+
+// Bulk add text content
+const bulkTextResponse = await supermemory.memories.bulkAdd({
+  contents: [
+    'First note content',
+    'Second note content',
+    'Third note content'
+  ],
+  spaces: ['space-uuid']
+});
+
+// Handle streaming response
+for await (const chunk of bulkResponse) {
+  console.log('Progress:', chunk);
+}
+```
+
+### Retrieving and Managing Memories
+
+```typescript
+// List memories with pagination
+const memories = await supermemory.memories.list({
+  start: 0,
+  count: 20,
+  spaceId: 'space-uuid' // Optional: filter by space
+});
+
+// Get specific memory
+const memory = await supermemory.memories.get('memory-uuid');
+
+// Delete memory
+await supermemory.memories.delete('memory-uuid');
+
+// Batch delete memories
+await supermemory.memories.batchDelete(['uuid1', 'uuid2', 'uuid3']);
+```
+
+## Search and AI Features
+
+### Semantic Search
+
+```typescript
+// Basic search
+const searchResults = await supermemory.search({
+  query: 'machine learning best practices',
+  limit: 10
+});
+
+// Advanced search with filters
+const advancedResults = await supermemory.search({
+  query: 'productivity tips',
+  limit: 20,
+  threshold: 0.8,
+  spaces: ['work-space-uuid', 'personal-space-uuid']
+});
+
+// Process search results
+searchResults.results.forEach(result => {
+  console.log(`Title: ${result.document.title}`);
+  console.log(`Similarity: ${result.similarity}`);
+  console.log(`Relevant text: ${result.chunk}`);
+});
+```
+
+### AI Chat
+
+```typescript
+// Simple chat
+const chatResponse = await supermemory.chat({
+  messages: [
+    { role: 'user', content: 'What have I learned about React hooks?' }
+  ]
+});
+
+// Handle streaming response
+for await (const chunk of chatResponse) {
+  process.stdout.write(chunk.content || '');
+}
+
+// Continue conversation with thread ID
+const continuedChat = await supermemory.chat({
+  messages: [
+    { role: 'user', content: 'Tell me more about useEffect' }
+  ],
+  threadId: 'existing-thread-id'
+});
+
+// Chat with custom configuration
+const customChat = await supermemory.chat({
+  messages: [
+    { role: 'system', content: 'You are a helpful coding assistant.' },
+    { role: 'user', content: 'Explain React hooks in simple terms' }
+  ],
+  model: 'gpt-4', // If supported
+  temperature: 0.7
+});
+```
+
+### AI Suggestions
+
+```typescript
+// Get recommended questions
+const questions = await supermemory.ai.getRecommendedQuestions();
+console.log(questions.questions);
+
+// Get suggested learnings
+const learnings = await supermemory.ai.getSuggestedLearnings();
+learnings.suggestedLearnings.forEach(learning => {
+  console.log(`${learning.title}: ${learning.description}`);
+});
+```
+
+## Error Handling
+
+### Built-in Error Types
+
+```typescript
+import { SuperMemoryError, RateLimitError, AuthenticationError } from '@supermemory/sdk';
+
+try {
+  const memory = await supermemory.memories.create({
+    type: 'page',
+    content: 'https://example.com'
+  });
+} catch (error) {
+  if (error instanceof AuthenticationError) {
+    console.error('Invalid API key:', error.message);
+  } else if (error instanceof RateLimitError) {
+    console.error('Rate limit exceeded. Retry after:', error.retryAfter);
+  } else if (error instanceof SuperMemoryError) {
+    console.error('API error:', error.message, error.details);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+### Automatic Retry Logic
+
+```typescript
+// SDK automatically retries failed requests
+const supermemory = new SuperMemory({
+  apiKey: 'your_api_key',
+  retries: 3,
+  retryDelay: 1000,
+  // Exponential backoff: 1s, 2s, 4s
+  retryDelayMultiplier: 2
+});
+
+// Custom retry logic for specific operations
+const memoryWithRetry = await supermemory.memories.create(
+  {
+    type: 'page',
+    content: 'https://example.com'
+  },
+  {
+    retries: 5,
+    retryDelay: 2000
+  }
+);
+```
+
+## TypeScript Support
+
+The SDK is built with TypeScript and provides full type safety:
+
+```typescript
+import { 
+  SuperMemory, 
+  Memory, 
+  Space, 
+  SearchResult, 
+  ChatMessage 
+} from '@supermemory/sdk';
+
+// All responses are properly typed
+const memory: Memory = await supermemory.memories.get('uuid');
+const spaces: Space[] = await supermemory.spaces.list();
+const results: SearchResult[] = (await supermemory.search({ query: 'test' })).results;
+
+// Function parameters are type-checked
+const newMemory = await supermemory.memories.create({
+  type: 'page', // Type: 'page' | 'note' | 'document' | 'tweet'
+  content: 'https://example.com',
+  spaces: ['uuid'] // Type: string[]
+});
+```
+
+## Advanced Usage
+
+### Custom HTTP Client
+
+```typescript
+import axios from 'axios';
+import { SuperMemory } from '@supermemory/sdk';
+
+// Use custom HTTP client
+const customHttpClient = axios.create({
+  timeout: 60000,
+  headers: {
+    'User-Agent': 'MyApp/1.0'
+  }
+});
+
+const supermemory = new SuperMemory({
+  apiKey: 'your_api_key',
+  httpClient: customHttpClient
+});
+```
+
+### Middleware and Interceptors
+
+```typescript
+// Add request/response interceptors
+supermemory.addRequestInterceptor((config) => {
+  console.log('Making request to:', config.url);
+  return config;
+});
+
+supermemory.addResponseInterceptor(
+  (response) => {
+    console.log('Response received:', response.status);
+    return response;
+  },
+  (error) => {
+    console.error('Request failed:', error.message);
+    return Promise.reject(error);
+  }
+);
+```
+
+### Batch Operations with Progress Tracking
+
+```typescript
+async function bulkImportWithProgress(urls: string[]) {
+  const response = await supermemory.memories.bulkAdd({
+    urls,
+    spaces: ['import-space-uuid']
+  });
+
+  let processed = 0;
+  let succeeded = 0;
+  let failed = 0;
+
+  for await (const update of response) {
+    processed++;
+    
+    if (update.success) {
+      succeeded++;
+      console.log(`✓ Imported: ${update.url}`);
+    } else {
+      failed++;
+      console.log(`✗ Failed: ${update.url} - ${update.error}`);
+    }
+
+    const progress = (processed / urls.length) * 100;
+    console.log(`Progress: ${progress.toFixed(1)}% (${succeeded} succeeded, ${failed} failed)`);
+  }
+
+  console.log(`\nImport complete: ${succeeded}/${urls.length} successful`);
+}
+```
+
+## Integration Examples
+
+### React Hook
+
+```typescript
+// useSupermemory.ts
+import { useState, useEffect } from 'react';
+import { SuperMemory, Memory } from '@supermemory/sdk';
+
+const supermemory = new SuperMemory({
+  apiKey: process.env.REACT_APP_SUPERMEMORY_API_KEY!
+});
+
+export function useMemories(spaceId?: string) {
+  const [memories, setMemories] = useState<Memory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMemories() {
+      try {
+        setLoading(true);
+        const response = await supermemory.memories.list({
+          spaceId,
+          count: 50
+        });
+        setMemories(response.items);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMemories();
+  }, [spaceId]);
+
+  return { memories, loading, error };
+}
+
+// Component usage
+function MemoryList({ spaceId }: { spaceId?: string }) {
+  const { memories, loading, error } = useMemories(spaceId);
+
+  if (loading) return <div>Loading memories...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      {memories.map(memory => (
+        <div key={memory.uuid}>
+          <h3>{memory.title}</h3>
+          <p>{memory.description}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Express.js API
+
+```typescript
+import express from 'express';
+import { SuperMemory } from '@supermemory/sdk';
+
+const app = express();
+const supermemory = new SuperMemory({
+  apiKey: process.env.SUPERMEMORY_API_KEY!
+});
+
+app.use(express.json());
+
+// Proxy search endpoint
+app.post('/api/search', async (req, res) => {
+  try {
+    const { query, limit = 10 } = req.body;
+    const results = await supermemory.search({ query, limit });
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add memory endpoint
+app.post('/api/memories', async (req, res) => {
+  try {
+    const memory = await supermemory.memories.create(req.body);
+    res.status(201).json(memory);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+## Testing
+
+### Unit Testing with Jest
+
+```typescript
+// supermemory.test.ts
+import { SuperMemory } from '@supermemory/sdk';
+
+// Mock the SDK for testing
+jest.mock('@supermemory/sdk');
+
+describe('SuperMemory Integration', () => {
+  let supermemory: SuperMemory;
+
+  beforeEach(() => {
+    supermemory = new SuperMemory({
+      apiKey: 'test-api-key'
+    });
+  });
+
+  test('should create memory', async () => {
+    const mockMemory = {
+      uuid: 'test-uuid',
+      title: 'Test Memory',
+      type: 'note',
+      content: 'Test content'
+    };
+
+    (supermemory.memories.create as jest.Mock).mockResolvedValue(mockMemory);
+
+    const memory = await supermemory.memories.create({
+      type: 'note',
+      content: 'Test content'
+    });
+
+    expect(memory).toEqual(mockMemory);
+    expect(supermemory.memories.create).toHaveBeenCalledWith({
+      type: 'note',
+      content: 'Test content'
+    });
+  });
+});
+```
+
+## Contributing
+
+The SDK is open source and welcomes contributions:
+
+```bash
+# Clone the repository
+git clone https://github.com/DeNIRMAL/memory2.git
+cd memory2/packages/sdk
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Build the package
+npm run build
+```
+
+## API Reference
+
+For complete SDK documentation:
+
+<CardGroup cols={2}>
+  <Card
+    title="API Reference"
+    href="/api-reference/introduction"
+    icon="book"
+  >
+    Complete REST API documentation
+  </Card>
+  <Card
+    title="TypeScript Types"
+    href="https://github.com/DeNIRMAL/memory2/tree/main/packages/sdk/src/types"
+    icon="typescript"
+  >
+    Full TypeScript type definitions
+  </Card>
+</CardGroup>
+
+---
+
+The JavaScript/TypeScript SDK provides a complete, type-safe interface to SuperMemory's API, making it easy to integrate SuperMemory into your applications with full IDE support and excellent developer experience.

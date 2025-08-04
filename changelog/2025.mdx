@@ -1,0 +1,320 @@
+---
+title: '2025 Changelog'
+description: 'Latest updates and improvements to SuperMemory'
+---
+
+## January 2025
+
+### v2.1.0 - January 15, 2025
+
+<Card title="🚀 Major Features" icon="rocket">
+  **Custom Domain API Hosting**
+  - Launched professional API at `api.vevibe.com`
+  - Improved reliability and response times
+  - Better SSL/TLS security
+</Card>
+
+#### New Features
+- **Enhanced API Documentation**: Complete OpenAPI 3.0 specification with interactive docs
+- **MCP Server Integration**: Full Model Context Protocol support for Claude Desktop
+- **Improved Search Algorithm**: 30% better relevance scoring for semantic search
+- **Bulk Operations**: New endpoints for batch memory management
+
+#### Improvements
+- **Performance**: 40% faster memory processing pipeline
+- **UI/UX**: Redesigned spaces interface with better collaboration tools
+- **Mobile**: Improved mobile web experience with responsive design
+- **Security**: Enhanced API key management with rotation capabilities
+
+#### API Changes
+- **New Endpoints**:
+  - `POST /v1/memories/batch-delete` - Bulk delete memories
+  - `POST /v1/reprocess-missing-metadata` - Reprocess failed memories
+  - `GET /v1/recommended-questions` - AI-generated question suggestions
+  - `GET /v1/suggested-learnings` - Personalized learning recommendations
+
+- **Enhanced Endpoints**:
+  - `POST /v1/search` - Added space filtering and improved relevance
+  - `POST /v1/chat` - Streaming responses and conversation threading
+  - `POST /v1/bulk-add` - Progress tracking and error reporting
+
+#### Bug Fixes
+- Fixed memory processing failures for certain PDF formats
+- Resolved space invitation email delivery issues
+- Fixed duplicate detection for URLs with tracking parameters
+- Corrected timezone handling in chat history
+
+---
+
+### v2.0.5 - January 8, 2025
+
+#### Features
+- **Twitter Integration**: Automatic bookmark and liked tweet sync
+- **Notion Import**: Bulk import from Notion workspaces
+- **Browser Extension**: Updated Chrome and Firefox extensions
+
+#### Improvements
+- **Search Speed**: 25% improvement in search response times
+- **Memory Processing**: Better handling of complex document formats
+- **Error Handling**: More descriptive error messages and recovery suggestions
+
+#### Bug Fixes
+- Fixed browser extension authentication flow
+- Resolved memory deduplication edge cases
+- Fixed space permission inheritance issues
+
+---
+
+### v2.0.0 - January 1, 2025
+
+<Card title="🎉 Major Release" icon="star">
+  **SuperMemory 2.0 - The AI-Powered Knowledge Revolution**
+  - Complete platform redesign
+  - Advanced AI features
+  - Professional API launch
+</Card>
+
+#### Breaking Changes
+- **API v2**: New REST API with improved structure
+- **Database Migration**: Automatic migration for existing users
+- **Authentication**: Enhanced security with API key management
+
+#### New Features
+- **AI Chat**: Conversational interface with your knowledge
+- **Smart Spaces**: AI-powered content organization
+- **Advanced Search**: Semantic search with natural language queries
+- **Real-time Collaboration**: Live editing and sharing
+- **Mobile Apps**: Native iOS and Android applications
+
+#### Infrastructure
+- **Custom Domain**: Professional API hosting at api.vevibe.com
+- **CDN**: Global content delivery network for faster access
+- **Auto-scaling**: Dynamic resource allocation based on usage
+- **99.9% Uptime**: Enterprise-grade reliability guarantees
+
+---
+
+## December 2024
+
+### v1.9.8 - December 28, 2024
+
+#### Features
+- **Holiday Update**: Special holiday-themed UI elements
+- **Year-end Analytics**: Personal knowledge wrapped for 2024
+- **Export Tools**: Enhanced data export capabilities
+
+#### Improvements
+- **Performance**: Optimized vector search indexing
+- **UI**: Dark mode improvements and accessibility enhancements
+- **Documentation**: Comprehensive API documentation overhaul
+
+---
+
+### v1.9.5 - December 15, 2024
+
+#### Features
+- **Slack Integration Beta**: Connect your Slack workspace
+- **Advanced Filters**: More granular search and organization options
+- **Team Analytics**: Usage insights for shared spaces
+
+#### Bug Fixes
+- Fixed memory processing timeouts for large documents
+- Resolved notification delivery issues
+- Fixed space creation limits for free accounts
+
+---
+
+### v1.9.0 - December 1, 2024
+
+#### Features
+- **Collaborative Spaces**: Real-time collaboration features
+- **Advanced Permissions**: Granular access control
+- **Integration Hub**: Centralized integration management
+
+#### Improvements
+- **Search Algorithm**: Machine learning-enhanced relevance
+- **Processing Pipeline**: 50% faster content processing
+- **Mobile Experience**: Responsive design improvements
+
+---
+
+## November 2024
+
+### v1.8.5 - November 20, 2024
+
+#### Features
+- **PDF Processing**: Enhanced PDF text extraction
+- **Image Recognition**: OCR for images and screenshots
+- **Webhook Support**: Custom integrations via webhooks
+
+#### Security
+- **Two-Factor Authentication**: Optional 2FA for accounts
+- **Audit Logs**: Complete activity tracking
+- **SOC 2 Compliance**: Security certification achieved
+
+---
+
+### v1.8.0 - November 1, 2024
+
+#### Features
+- **Public Spaces**: Share knowledge publicly
+- **Embedded Widgets**: Embed memories in external sites
+- **API Rate Limiting**: Fair usage policies
+
+#### Improvements
+- **Onboarding**: Streamlined new user experience
+- **Help System**: In-app help and tutorials
+- **Performance**: Database query optimizations
+
+---
+
+## October 2024
+
+### v1.7.8 - October 25, 2024
+
+#### Features
+- **RSS Feeds**: Automatic RSS feed monitoring
+- **Email Forwarding**: Save emails to SuperMemory
+- **Calendar Integration**: Connect with Google Calendar
+
+#### Bug Fixes
+- Fixed duplicate memory creation
+- Resolved space synchronization issues
+- Fixed mobile browser extension compatibility
+
+---
+
+### v1.7.5 - October 15, 2024
+
+#### Features
+- **Advanced Tagging**: Hierarchical tag system
+- **Smart Recommendations**: AI-powered content suggestions
+- **Usage Analytics**: Personal usage insights
+
+#### Improvements
+- **Search Performance**: 35% faster search results
+- **Memory Processing**: Better handling of complex formats
+- **User Interface**: Updated design system
+
+---
+
+### v1.7.0 - October 1, 2024
+
+#### Features
+- **Teams & Organizations**: Multi-user account management
+- **Enterprise SSO**: SAML and OAuth integration
+- **Custom Domains**: Branded instances for enterprises
+
+#### Security
+- **Enhanced Encryption**: End-to-end encryption for sensitive data
+- **Access Controls**: Role-based permissions
+- **Compliance**: GDPR and CCPA compliance tools
+
+---
+
+## Migration Guides
+
+### Upgrading to v2.0
+
+<Warning>
+SuperMemory 2.0 includes breaking changes. Please review the migration guide before upgrading.
+</Warning>
+
+#### API Changes
+- **Base URL**: Updated from `supermemory.ai/api` to `api.vevibe.com`
+- **Authentication**: New API key format (regeneration required)
+- **Endpoints**: Several endpoint paths have changed
+
+#### Migration Steps
+1. **Backup Data**: Export your memories before upgrading
+2. **Update API Keys**: Generate new API keys for integrations
+3. **Update Integrations**: Point to new API endpoints
+4. **Test Functionality**: Verify all features work correctly
+
+#### Compatibility
+- **Browser Extensions**: Auto-update to compatible versions
+- **Mobile Apps**: Update required from app stores
+- **Third-party Tools**: Check with tool maintainers for compatibility
+
+### Database Migration
+
+Existing users will be automatically migrated:
+
+```sql
+-- Automatic migration script (example)
+ALTER TABLE memories ADD COLUMN content_hash VARCHAR(64);
+ALTER TABLE spaces ADD COLUMN collaboration_settings JSONB;
+CREATE INDEX idx_memories_content_hash ON memories(content_hash);
+```
+
+## Deprecation Notices
+
+### Upcoming Deprecations
+
+<Warning>
+These features will be deprecated in future releases:
+</Warning>
+
+- **Legacy API v1**: Will be sunset on June 1, 2025
+- **Old Browser Extension**: Support ends March 1, 2025
+- **HTTP API Access**: HTTPS required starting April 1, 2025
+
+### Recently Deprecated
+
+- **Legacy Search API**: Replaced by semantic search (October 2024)
+- **Old Space Permissions**: Replaced by granular controls (November 2024)
+
+## Beta Features
+
+Try upcoming features in beta:
+
+<CardGroup cols={2}>
+  <Card
+    title="AI Assistants"
+    icon="robot"
+  >
+    Custom AI assistants trained on your knowledge
+  </Card>
+  <Card
+    title="Voice Interface"
+    icon="microphone"
+  >
+    Voice commands and audio memory capture
+  </Card>
+  <Card
+    title="Knowledge Graphs"
+    icon="project-diagram"
+  >
+    Visual relationship mapping between memories
+  </Card>
+  <Card
+    title="Advanced Analytics"
+    icon="chart-line"
+  >
+    Detailed insights into your knowledge patterns
+  </Card>
+</CardGroup>
+
+## Roadmap Preview
+
+### Q1 2025
+- **AI Writing Assistant**: Help create content from your knowledge
+- **Advanced Integrations**: GitHub, Linear, Discord
+- **Mobile App Redesign**: Native mobile experience
+- **Enterprise Features**: Advanced admin controls
+
+### Q2 2025
+- **Knowledge Graph Visualization**: Interactive knowledge mapping
+- **Advanced AI Models**: Support for latest language models
+- **Offline Sync**: Work without internet connection
+- **Custom Workflows**: Automated knowledge processing
+
+### Q3 2025
+- **Multi-language Support**: Full internationalization
+- **Advanced Security**: Zero-trust architecture
+- **AI Training**: Train custom models on your data
+- **Federation**: Connect multiple SuperMemory instances
+
+---
+
+Stay updated with the latest changes by following our [GitHub releases](https://github.com/DeNIRMAL/memory2/releases) or joining our [Discord community](https://discord.gg/supermemory).
