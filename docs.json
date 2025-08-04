@@ -10,11 +10,7 @@
   "colors": {
     "primary": "#2563eb",
     "light": "#3b82f6",
-    "dark": "#1d4ed8",
-    "anchors": {
-      "from": "#2563eb",
-      "to": "#1d4ed8"
-    }
+    "dark": "#1d4ed8"
   },
   "topbarLinks": [
     {
@@ -57,52 +53,54 @@
       "url": "https://api.vevibe.com"
     }
   ],
-  "navigation": [
-    {
-      "group": "Get Started",
-      "pages": [
-        "index",
-        "quickstart",
-        "self-hosting"
-      ]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "essentials/spaces",
-        "essentials/memories",
-        "essentials/ai-chat",
-        "essentials/api-keys",
-        "essentials/integrations"
-      ]
-    },
-    {
-      "group": "API Reference",
-      "pages": [
-        "api-reference/introduction",
-        "api-reference/authentication"
-      ]
-    },
-    {
-      "group": "SDKs",
-      "pages": [
-        "sdks/javascript",
-        "sdks/python"
-      ]
-    },
-    {
-      "group": "MCP Integration",
-      "pages": [
-        "mcp/overview"
-      ]
-    },
-    {
-      "group": "Changelog",
-      "pages": [
-        "changelog/2025"
-      ]
-    }
-  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "index",
+          "quickstart",
+          "self-hosting"
+        ]
+      },
+      {
+        "group": "Essentials",
+        "pages": [
+          "essentials/spaces",
+          "essentials/memories",
+          "essentials/ai-chat",
+          "essentials/api-keys",
+          "essentials/integrations"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction",
+          "api-reference/authentication"
+        ]
+      },
+      {
+        "group": "SDKs",
+        "pages": [
+          "sdks/javascript",
+          "sdks/python"
+        ]
+      },
+      {
+        "group": "MCP Integration",
+        "pages": [
+          "mcp/overview"
+        ]
+      },
+      {
+        "group": "Changelog",
+        "pages": [
+          "changelog/2025"
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "github": "https://github.com/DeNIRMAL/memory2",
     "discord": "https://discord.gg/supermemory",
