@@ -1,26 +1,26 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Vevibe Memory API",
-  "theme": "prism",
+  "name": "SuperMemory",
+  "theme": "mint",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#6366f1",
-    "light": "#8b5cf6",
-    "dark": "#4f46e5"
+    "primary": "#2563eb",
+    "light": "#3b82f6",
+    "dark": "#1d4ed8"
   },
   "topbarLinks": [
     {
       "name": "Dashboard",
-      "url": "https://vevibe.com"
+      "url": "https://supermemory.ai"
     }
   ],
   "topbarCtaButton": {
     "name": "Get Started",
-    "url": "https://vevibe.com/signup"
+    "url": "https://supermemory.ai/signup"
   },
   "tabs": [
     {
@@ -45,17 +45,12 @@
     {
       "name": "Discord",
       "icon": "discord",
-      "url": "https://discord.gg/vevibe"
+      "url": "https://discord.gg/supermemory"
     },
     {
       "name": "Live API",
       "icon": "link",
       "url": "https://api.vevibe.com"
-    },
-    {
-      "name": "Website",
-      "icon": "globe",
-      "url": "https://vevibe.com"
     }
   ],
   "navigation": {
@@ -108,14 +103,13 @@
   },
   "footerSocials": {
     "github": "https://github.com/DeNIRMAL/memory2",
-    "discord": "https://discord.gg/vevibe",
-    "twitter": "https://twitter.com/vevibe"
+    "discord": "https://discord.gg/supermemory",
+    "twitter": "https://twitter.com/supermemory"
   },
   "api": {
     "baseUrl": "https://api.vevibe.com",
     "auth": {
       "method": "bearer"
     }
-  },
-  "domain": "docs.vevibe.com"
+  }
 }

@@ -1,193 +1,227 @@
 ---
-title: 'Quickstart'
-description: 'Get started with SuperMemory in under 5 minutes'
+title: "Quickstart Guide"
+description: "Get started with the Vevibe Memory API in under 5 minutes"
 ---
 
-## Welcome to SuperMemory
+# Quickstart Guide
 
-This quickstart guide will help you set up SuperMemory and add your first memories in just a few minutes.
+This guide will help you make your first API call to the Vevibe Memory API and create your first memory.
 
-## Step 1: Create Your Account
+## Prerequisites
 
-<Steps>
-  <Step title="Sign Up">
-    Visit [supermemory.ai](https://supermemory.ai) and create your free account
-  </Step>
-  <Step title="Verify Email">
-    Check your email and verify your account
-  </Step>
-  <Step title="Complete Setup">
-    Follow the onboarding flow to set up your profile
-  </Step>
-</Steps>
+Before you begin, make sure you have:
+- A Vevibe account (sign up at [vevibe.com](https://vevibe.com))
+- An API key from your [dashboard](https://vevibe.com/dashboard)
 
-## Step 2: Install Browser Extension
+## Step 1: Get Your API Key
 
-The browser extension makes saving content effortless:
+1. Log in to your [Vevibe Dashboard](https://vevibe.com/dashboard)
+2. Navigate to the API Keys section
+3. Create a new API key or copy an existing one
+4. Keep this key secure - you'll need it for all API requests
 
-<Tabs>
-  <Tab title="Chrome">
-    1. Visit the [Chrome Web Store](https://chrome.google.com/webstore)
-    2. Search for "SuperMemory"
-    3. Click "Add to Chrome"
-    4. Sign in with your SuperMemory account
-  </Tab>
-  <Tab title="Firefox">
-    1. Visit [Firefox Add-ons](https://addons.mozilla.org)
-    2. Search for "SuperMemory"
-    3. Click "Add to Firefox"
-    4. Sign in with your SuperMemory account
-  </Tab>
-  <Tab title="Safari">
-    1. Download from the App Store
-    2. Enable in Safari Extensions
-    3. Sign in with your SuperMemory account
-  </Tab>
-</Tabs>
+## Step 2: Create Your First Space
 
-## Step 3: Add Your First Memory
+Spaces are containers that help organize your memories. Let's create one:
 
-Let's add some content to SuperMemory:
-
-### Method 1: Browser Extension
-1. Navigate to any webpage
-2. Click the SuperMemory extension icon
-3. Choose a space (or create a new one)
-4. Click "Save"
-
-### Method 2: Web Dashboard
-1. Go to your [SuperMemory dashboard](https://supermemory.ai/dashboard)
-2. Click the "+" button
-3. Paste a URL or type/paste text content
-4. Select the content type and space
-5. Click "Add Memory"
-
-### Method 3: API
-```bash
-curl -X POST https://api.vevibe.com/v1/add \
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.vevibe.com/v1/spaces" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "type": "page",
-    "content": "https://example.com/article",
-    "spaces": ["your-space-id"]
+    "name": "My First Space",
+    "description": "A space for testing the Vevibe Memory API"
   }'
 ```
 
-## Step 4: Create Your First Space
+```javascript JavaScript
+const response = await fetch('https://api.vevibe.com/v1/spaces', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'My First Space',
+    description: 'A space for testing the Vevibe Memory API'
+  })
+});
 
-Spaces help organize your knowledge:
+const space = await response.json();
+console.log('Created space:', space);
+```
 
-<Steps>
-  <Step title="Navigate to Spaces">
-    Go to the Spaces section in your dashboard
-  </Step>
-  <Step title="Create New Space">
-    Click "Create Space" and give it a name like "Learning" or "Work"
-  </Step>
-  <Step title="Set Permissions">
-    Choose if it's private or if you want to invite collaborators
-  </Step>
-  <Step title="Add Content">
-    Start adding memories to your new space
-  </Step>
-</Steps>
+```python Python
+import requests
 
-## Step 5: Try AI Search and Chat
+response = requests.post(
+    'https://api.vevibe.com/v1/spaces',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'My First Space',
+        'description': 'A space for testing the Vevibe Memory API'
+    }
+)
 
-Now that you have some content, let's explore SuperMemory's AI features:
+space = response.json()
+print('Created space:', space)
+```
+</CodeGroup>
 
-### Search Your Memories
-1. Use the search bar in your dashboard
-2. Try natural language queries like:
-   - "articles about machine learning"
-   - "notes from last week's meeting"
-   - "research on climate change"
+## Step 3: Add Your First Memory
 
-### Chat with Your Knowledge
-1. Click on the Chat feature
-2. Ask questions about your saved content:
-   - "What did I save about productivity?"
-   - "Summarize my research on AI"
-   - "Find connections between my saved articles"
+Now let's add some content to your space:
 
-## Step 6: Set Up Integrations (Optional)
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.vevibe.com/v1/memories" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Vevibe Memory API is a powerful tool for building AI-driven applications with intelligent memory capabilities.",
+    "type": "note",
+    "spaceId": "SPACE_ID_FROM_STEP_2"
+  }'
+```
 
-Connect SuperMemory with your favorite tools:
+```javascript JavaScript
+const response = await fetch('https://api.vevibe.com/v1/memories', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    content: 'Vevibe Memory API is a powerful tool for building AI-driven applications with intelligent memory capabilities.',
+    type: 'note',
+    spaceId: 'SPACE_ID_FROM_STEP_2'
+  })
+});
 
-<CardGroup cols={2}>
-  <Card
-    title="Twitter Integration"
-    icon="twitter"
-    href="/essentials/integrations#twitter"
-  >
-    Automatically save your liked tweets and bookmarks
-  </Card>
-  <Card
-    title="Notion Import"
-    icon="notion"
-    href="/essentials/integrations#notion"
-  >
-    Import your existing Notion pages
-  </Card>
-</CardGroup>
+const memory = await response.json();
+console.log('Created memory:', memory);
+```
 
-## API Access
+```python Python
+response = requests.post(
+    'https://api.vevibe.com/v1/memories',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'content': 'Vevibe Memory API is a powerful tool for building AI-driven applications with intelligent memory capabilities.',
+        'type': 'note',
+        'spaceId': 'SPACE_ID_FROM_STEP_2'
+    }
+)
 
-For developers who want to integrate SuperMemory:
+memory = response.json()
+print('Created memory:', memory)
+```
+</CodeGroup>
 
-<Steps>
-  <Step title="Generate API Key">
-    Go to Settings → Integrations → Generate API Key
-  </Step>
-  <Step title="Test Your Connection">
-    ```bash
-    curl -H "Authorization: Bearer YOUR_API_KEY" \
-         https://api.vevibe.com/v1/user
-    ```
-  </Step>
-  <Step title="Explore the API">
-    Check out our [API documentation](/api-reference/introduction) for all available endpoints
-  </Step>
-</Steps>
+## Step 4: Search Your Memories
+
+Now let's search for the memory you just created:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.vevibe.com/v1/memories/search?q=Vevibe%20API&spaceId=SPACE_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.vevibe.com/v1/memories/search?q=Vevibe%20API&spaceId=SPACE_ID', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+});
+
+const results = await response.json();
+console.log('Search results:', results);
+```
+
+```python Python
+response = requests.get(
+    'https://api.vevibe.com/v1/memories/search',
+    params={'q': 'Vevibe API', 'spaceId': 'SPACE_ID'},
+    headers={'Authorization': 'Bearer YOUR_API_KEY'}
+)
+
+results = response.json()
+print('Search results:', results)
+```
+</CodeGroup>
+
+## Step 5: Chat with Your Memories
+
+The most powerful feature is the ability to have conversations with your stored data:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.vevibe.com/v1/chat" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What did I learn about the Vevibe API?",
+    "spaceId": "SPACE_ID"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.vevibe.com/v1/chat', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    message: 'What did I learn about the Vevibe API?',
+    spaceId: 'SPACE_ID'
+  })
+});
+
+const chatResponse = await response.json();
+console.log('AI Response:', chatResponse.message);
+```
+
+```python Python
+response = requests.post(
+    'https://api.vevibe.com/v1/chat',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'message': 'What did I learn about the Vevibe API?',
+        'spaceId': 'SPACE_ID'
+    }
+)
+
+chat_response = response.json()
+print('AI Response:', chat_response['message'])
+```
+</CodeGroup>
 
 ## Next Steps
 
-<CardGroup cols={2}>
-  <Card
-    title="Explore Spaces"
-    icon="folder"
-    href="/essentials/spaces"
-  >
-    Learn advanced space management and collaboration
-  </Card>
-  <Card
-    title="Master AI Features"
-    icon="brain"
-    href="/essentials/ai-chat"
-  >
-    Discover powerful AI search and chat capabilities
-  </Card>
-  <Card
-    title="API Integration"
-    icon="code"
-    href="/api-reference/introduction"
-  >
-    Build applications with SuperMemory API
-  </Card>
-  <Card
-    title="Self-Hosting"
-    icon="server"
-    href="/self-hosting"
-  >
-    Deploy SuperMemory on your own infrastructure
-  </Card>
-</CardGroup>
+Congratulations! You've successfully:
+-  Created a space
+-  Added a memory
+-  Searched your memories
+-  Had a conversation with your data
 
-## Need Help?
+Now you're ready to:
+- Explore the [API Reference](/api-reference) for all available endpoints
+- Learn about [advanced features](/essentials/spaces) like spaces and integrations
+- Check out our [SDKs](/sdks) for your preferred programming language
+- Join our [Discord community](https://discord.gg/vevibe) for support and updates
 
-<Warning>
-If you encounter any issues during setup, check out our [troubleshooting guide](/essentials/troubleshooting) or reach out on [Discord](https://discord.gg/supermemory).
-</Warning>
-
-Congratulations! You're now ready to start building your second brain with SuperMemory. Happy learning! 🧠✨
+<Card title="Need Help?" icon="question">
+  If you run into any issues, check out our [troubleshooting guide](/support) or reach out to our support team.
+</Card>
