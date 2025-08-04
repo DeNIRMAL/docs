@@ -1,6 +1,7 @@
-{
+﻿{
   "$schema": "https://mintlify.com/schema.json",
   "name": "SuperMemory",
+  "theme": "mint",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -60,7 +61,7 @@
     {
       "group": "Get Started",
       "pages": [
-        "introduction",
+        "index",
         "quickstart",
         "self-hosting"
       ]
@@ -71,8 +72,8 @@
         "essentials/spaces",
         "essentials/memories",
         "essentials/ai-chat",
-        "essentials/search",
-        "essentials/browser-extension"
+        "essentials/api-keys",
+        "essentials/integrations"
       ]
     },
     {
